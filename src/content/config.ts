@@ -1,48 +1,36 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
-const commonSchema = z.object({
+const lessonSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  order: z.number().default(0),
-  lastUpdated: z.string().or(z.date()).optional(),
+  program_id: z.string(),
+  type: z.enum(['lessons', 'slides', 'activities']),
+  last_updated: z.date().optional(),
+  layout: z.string().optional(),
+  // Fallback fields for legacy MD
+  alignment: z.array(z.string()).optional(),
+  objectives: z.array(z.string()).optional(),
+  keywords: z.array(z.string()).optional(),
 });
 
 const lessons = defineCollection({
-  type: 'content',
-  schema: commonSchema.extend({
-    duration: z.string().optional(),
-    difficulty: z.enum(['beginner', 'intermediate', 'advanced']).default('beginner'),
-  }),
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/lessons" }),
+  schema: lessonSchema,
 });
 
 const slides = defineCollection({
-  type: 'content',
-  schema: commonSchema.extend({
-    layout: z.string().default('default'),
-    theme: z.string().optional(),
-  }),
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/slides" }),
+  schema: lessonSchema,
 });
 
-const quizzes = defineCollection({
-  type: 'content',
-  schema: commonSchema.extend({
-    passingScore: z.number().default(70),
-    timeLimit: z.number().optional(), // in minutes
-  }),
-});
-
-const labs = defineCollection({
-  type: 'content',
-  schema: commonSchema.extend({
-    environment: z.enum(['node', 'python', 'react', 'vanilla']).default('node'),
-    files: z.record(z.string()).optional(),
-  }),
+const activities = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/activities" }),
+  schema: lessonSchema,
 });
 
 export const collections = {
   lessons,
   slides,
-  quizzes,
-  labs,
+  activities,
 };
