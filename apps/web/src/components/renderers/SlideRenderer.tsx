@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../../lib/utils';
 import { ChevronLeft, ChevronRight, Maximize, Minimize, HelpCircle } from 'lucide-react';
+import ModernMarkdown from '../ModernMarkdown';
 
 interface SlideRendererProps {
   content: string;
@@ -20,8 +21,11 @@ export default function SlideRenderer({ content, title, className }: SlideRender
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
+  // Strip Marp frontmatter if it exists at the start
+  const cleanContent = content.replace(/^---[\s\S]*?---\n/, '');
+
   // Parse slides separated by ---
-  const slides: ParsedSlide[] = content.split('\n---\n').map((block) => {
+  const slides: ParsedSlide[] = cleanContent.split('\n---\n').map((block) => {
     const lines = block.trim().split('\n');
     let slideTitle = '';
     let slideContent = '';
@@ -75,12 +79,12 @@ export default function SlideRenderer({ content, title, className }: SlideRender
           className="w-full max-w-5xl px-12 py-16 flex flex-col items-center text-center"
         >
           {slides[currentSlide]?.title && (
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-12 tracking-tight">
+            <h2 className="text-2xl md:text-4xl font-bold text-white mb-8 tracking-tight max-w-4xl mx-auto">
               {slides[currentSlide].title}
             </h2>
           )}
-          <div className="text-xl md:text-3xl text-slate-300 leading-relaxed font-light prose prose-invert prose-2xl max-w-none">
-            {slides[currentSlide]?.content}
+          <div className="text-left w-full mx-auto">
+            <ModernMarkdown content={slides[currentSlide]?.content || ''} />
           </div>
         </motion.div>
       </AnimatePresence>

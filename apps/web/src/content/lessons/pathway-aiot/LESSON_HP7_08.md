@@ -4,14 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.276Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Lesson ID: HP7-08
-  Title: Data Privacy & GDPR - Bảo vệ quyền riêng tư người dùng
-  Phase: Phase 4 | Producing
-  Version: v1.3 | Ngày: 2026-04-08
--->
-
 ![HP7_08 Banner](https://img.shields.io/badge/HP7--08-Data_Privacy_&_GDPR-0B192C?style=for-the-badge&logo=gdpr&logoColor=16C47F)
 
 

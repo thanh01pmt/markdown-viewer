@@ -4,14 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.276Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Lesson ID: HP7-07
-  Title: Firewalls & Network Isolation - Hàng rào kỹ thuật số
-  Phase: Phase 4 | Producing
-  Version: v1.3 | Ngày: 2026-04-08
--->
-
 ![HP7 Security Blueprint - Network Wall](file:///Users/tonypham/MEGA/my-agents/packages/the-ultimate-curriculum-agent-os/projects/pathway-aiot/_assets/images/hp7_fortress.png)
 
 

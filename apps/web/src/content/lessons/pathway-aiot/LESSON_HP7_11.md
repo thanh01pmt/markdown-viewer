@@ -4,14 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.278Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Lesson ID: HP7-11
-  Title: Vá lỗi & Hardening - Cuộc đua cùng Hacker
-  Phase: Phase 4 | Producing
-  Version: v1.3 | Ngày: 2026-04-08
--->
-
 ![HP7_11 Banner](https://img.shields.io/badge/HP7--11-Patching_&_Hardening-0B192C?style=for-the-badge&logo=security&logoColor=16C47F)
 
 

@@ -4,42 +4,6 @@ program_id: "pathway-aiot"
 type: "slides"
 date: 2026-04-08T03:54:23.281Z
 ---
----
-marp: true
-theme: default
-paginate: true
-header: "HP7: Cyber Security for AIoT | Bài 02"
-footer: "© Pathway AIoT Curriculum | @content"
-style: |
-  section {
-    background-color: #050a14;
-    color: #c9d1d9;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  h1 {
-    color: #00BFFF;
-    text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
-  }
-  h2 {
-    color: #58a6ff;
-  }
-  code {
-    background-color: #0d1117;
-    color: #79c0ff;
-    border: 1px solid #30363d;
-  }
-  blockquote {
-    background: rgba(88, 166, 255, 0.1);
-    border-left: 5px solid #00BFFF;
-    color: #8b949e;
-  }
----
-
-<!-- 
-  Lesson: HP7.02 - Mật mã học: "Ngữ pháp" bí mật của các cỗ máy
-  Theme: Cyber Blue
--->
-
 
 ## IoT Security | Mật mã học cơ bản
 

@@ -1,0 +1,26 @@
+
+> @qms/web@1.0.0 build
+> astro build
+
+22:03:32 [content] Syncing content
+22:03:32 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src/content/activities"
+22:03:32 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src/content/quizzes"
+22:03:32 [content] Synced content
+22:03:32 [types] Generated 329ms
+22:03:32 [build] output: "static"
+22:03:32 [build] mode: "static"
+22:03:32 [build] directory: /Users/tonypham/MEGA/WebApp/markdown-viewer/apps/web/dist/
+22:03:32 [build] Collecting build info...
+22:03:32 [build] ✓ Completed in 344ms.
+22:03:32 [build] Building static entrypoints...
+22:03:32 [ERROR] [vite] ✗ Build failed in 490ms
+[vite]: Rollup failed to resolve import "astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Flessons%2Fpathway-aiot%2FLESSON_HP7_01.mdx&astroContentModuleFlag=true" from "/Users/tonypham/MEGA/WebApp/markdown-viewer/apps/web/.astro/content-modules.mjs".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+  Stack trace:
+    at viteLog (file:///Users/tonypham/MEGA/WebApp/markdown-viewer/node_modules/.pnpm/vite@7.3.2_@types+node@20.19.39_jiti@2.6.1_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.3/node_modules/vite/dist/node/chunks/config.js:33639:57)
+    at onwarn (file:///Users/tonypham/MEGA/WebApp/markdown-viewer/node_modules/.pnpm/@vitejs+plugin-react@5.2.0_vite@7.3.2_@types+node@20.19.39_jiti@2.6.1_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.3_/node_modules/@vitejs/plugin-react/dist/index.js:76:7)
+    at onRollupLog (file:///Users/tonypham/MEGA/WebApp/markdown-viewer/node_modules/.pnpm/vite@7.3.2_@types+node@20.19.39_jiti@2.6.1_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.3/node_modules/vite/dist/node/chunks/config.js:33668:63)
+    at file:///Users/tonypham/MEGA/WebApp/markdown-viewer/node_modules/.pnpm/rollup@4.60.1/node_modules/rollup/dist/es/shared/node-entry.js:21369:32
+    at ModuleLoader.handleInvalidResolvedId (file:///Users/tonypham/MEGA/WebApp/markdown-viewer/node_modules/.pnpm/rollup@4.60.1/node_modules/rollup/dist/es/shared/node-entry.js:22108:26)

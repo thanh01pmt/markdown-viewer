@@ -4,13 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.272Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Tạo bởi: Curriculum OS Builder (@content)
-  Phase: P3 | Deliverable: P3-T2
-  Version: v1.0 | Ngày: 2026-04-07
--->
-
 ![HP7 Security Concept - Secure Smart City](file:///Users/tonypham/MEGA/my-agents/packages/the-ultimate-curriculum-agent-os/projects/pathway-aiot/_assets/images/hp7_smartcity.png)
 
 

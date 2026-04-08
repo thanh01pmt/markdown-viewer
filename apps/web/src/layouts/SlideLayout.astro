@@ -1,7 +1,7 @@
 ---
 import MainLayout from './MainLayout.astro';
 import { type CollectionEntry } from 'astro:content';
-import SlideRenderer from '../components/renderers/SlideRenderer';
+import RevealSlides from '../components/slides/RevealSlides.astro';
 import { Sidebar, type NavItem } from '../components/Navigation/Sidebar';
 
 interface Props {
@@ -11,9 +11,10 @@ interface Props {
   slides: NavItem[];
   activities: NavItem[];
   currentSlug: string;
+  rawContent?: string;
 }
 
-const { slide, programId, lessons, slides, activities, currentSlug } = Astro.props;
+const { slide, programId, lessons, slides, activities, currentSlug, rawContent } = Astro.props;
 const { title, description } = slide.data;
 ---
 
@@ -37,13 +38,16 @@ const { title, description } = slide.data;
       </div>
     </header>
 
-    <main class="flex-1 relative">
-      <SlideRenderer client:load content={slide.body} title={title} />
+    <main class="flex-1 relative bg-black">
+      <RevealSlides theme="night" rawContent={rawContent}>
+        <slot />
+      </RevealSlides>
     </main>
   </div>
 </MainLayout>
 
 <script>
+  // Fullscreen toggle
   const btn = document.getElementById('fullscreen-btn');
   btn?.addEventListener('click', () => {
     if (!document.fullscreenElement) {
@@ -54,4 +58,27 @@ const { title, description } = slide.data;
       }
     }
   });
+
+  // Load Reveal.js from CDN
+  // @ts-ignore
+  import Reveal from 'https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.esm.js';
+  // @ts-ignore
+  import Markdown from 'https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/markdown/markdown.esm.js';
+  // @ts-ignore
+  import Highlight from 'https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.esm.js';
+  // @ts-ignore
+  import Notes from 'https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.esm.js';
+  
+  // Initialize Reveal.js
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    center: true,
+    hash: true,
+    transition: 'slide',
+    plugins: [ Markdown, Highlight, Notes ],
+    // Ensure it fits the container
+    embedded: true,
+  });
 </script>
+

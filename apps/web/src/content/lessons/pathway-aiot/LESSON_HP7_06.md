@@ -4,14 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.275Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Lesson ID: HP7-06
-  Title: Secure OTA - Bản cập nhật từ "Người đưa thư" tin cậy
-  Phase: Phase 4 | Producing
-  Version: v1.3 | Ngày: 2026-04-08
--->
-
 ![HP7 Security Blueprint - Secure Update](file:///Users/tonypham/MEGA/my-agents/packages/the-ultimate-curriculum-agent-os/projects/pathway-aiot/_assets/images/hp7_ota_secure.png)
 
 

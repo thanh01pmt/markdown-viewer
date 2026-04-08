@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import LessonLayout from '../../../layouts/LessonPlanLayout.astro';
 import SlideLayout from '../../../layouts/SlideLayout.astro';
 import ActivityLayout from '../../../layouts/LabLayout.astro'; // Fallback to LabLayout for activities
@@ -13,10 +13,10 @@ export async function getStaticPaths() {
     ...lessonEntries.map(entry => {
       const parts = entry.id.split('/');
       const programId = parts[0];
-      const slug = parts.slice(1).join('/').replace('.mdx', '');
-      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'lessons' }));
-      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'slides' }));
-      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'activities' }));
+      const slug = parts.slice(1).join('/').replace(/\.(mdx|md)$/, '');
+      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'lessons' }));
+      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'slides' }));
+      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'activities' }));
 
       return {
         params: { programId, type: 'lessons', slug },
@@ -26,10 +26,10 @@ export async function getStaticPaths() {
     ...slideEntries.map(entry => {
       const parts = entry.id.split('/');
       const programId = parts[0];
-      const slug = parts.slice(1).join('/').replace('.mdx', '');
-      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'lessons' }));
-      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'slides' }));
-      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'activities' }));
+      const slug = parts.slice(1).join('/').replace(/\.(mdx|md)$/, '');
+      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'lessons' }));
+      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'slides' }));
+      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'activities' }));
 
       return {
         params: { programId, type: 'slides', slug },
@@ -39,10 +39,10 @@ export async function getStaticPaths() {
     ...activityEntries.map(entry => {
       const parts = entry.id.split('/');
       const programId = parts[0];
-      const slug = parts.slice(1).join('/').replace('.mdx', '');
-      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'lessons' }));
-      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'slides' }));
-      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'activities' }));
+      const slug = parts.slice(1).join('/').replace(/\.(mdx|md)$/, '');
+      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'lessons' }));
+      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'slides' }));
+      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace(/\.(mdx|md)$/, ''), type: 'activities' }));
 
       return {
         params: { programId, type: 'activities', slug },
@@ -55,7 +55,7 @@ export async function getStaticPaths() {
 }
 
 const { entry, contentType, programId, lessons, slides, activities, currentSlug } = Astro.props;
-const { Content } = await (entry as any).render();
+const { Content } = await render(entry);
 ---
 
 {contentType === 'lessons' && (
@@ -79,7 +79,10 @@ const { Content } = await (entry as any).render();
     slides={slides} 
     activities={activities} 
     currentSlug={currentSlug}
-  />
+    rawContent={entry.body}
+  >
+    <Content />
+  </SlideLayout>
 )}
 
 {contentType === 'activities' && (

@@ -4,13 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.270Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Tạo bởi: Curriculum OS Builder (@content)
-  Phase: P3 | Deliverable: P3-T1
-  Version: v1.0 | Ngày: 2026-04-07
--->
-
 ![HP7 Unit Banner - Security & Future Tech](file:///Users/tonypham/MEGA/my-agents/packages/the-ultimate-curriculum-agent-os/projects/pathway-aiot/_assets/images/hp7_banner.png)
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ModernMarkdown from './components/ModernMarkdown';
 import { 
   FileText, Plus, Search, Layers, 
@@ -71,9 +71,38 @@ Follow step-by-step guides with progress tracking.
   }
 ];
 
-export default function App() {
-  const [activeDoc, setActiveDoc] = useState<typeof SAMPLES[0] | null>(null);
+interface DocEntry {
+  id: string;
+  data: {
+    title: string;
+    program_id?: string;
+    summary?: string;
+  };
+  collection: 'lessons' | 'slides';
+  slug: string;
+}
+
+interface AppProps {
+  lessons?: DocEntry[];
+  slides?: DocEntry[];
+}
+
+export default function App({ lessons = [], slides = [] }: AppProps) {
+  const [activeDoc, setActiveDoc] = useState<any | null>(null);
   const [search, setSearch] = useState('');
+
+  const documents = useMemo(() => {
+    const all = [
+      ...lessons.map(l => ({ ...l, type: 'lessons' })),
+      ...slides.map(s => ({ ...s, type: 'slides' }))
+    ];
+    
+    if (!search) return all;
+    return all.filter(doc => 
+      doc.data.title.toLowerCase().includes(search.toLowerCase()) ||
+      doc.id.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [lessons, slides, search]);
 
   if (activeDoc) {
     return (
@@ -138,29 +167,31 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {SAMPLES.map(doc => (
-                <button
+              {documents.map(doc => (
+                <a
                   key={doc.id}
-                  onClick={() => setActiveDoc(doc)}
+                  href={`/${doc.data.program_id || 'pathway-aiot'}/${doc.type}/${doc.id.split('/').pop()}`}
                   className="group relative flex flex-col text-left p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl hover:border-primary-500/50 dark:hover:border-primary-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-900/5"
                 >
                   <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl w-fit group-hover:bg-primary-600 group-hover:text-white transition-all duration-500">
                     <FileText className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-snug">
-                    {doc.title}
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 leading-snug">
+                    {doc.data.title}
                   </h3>
                   <p className="text-sm text-slate-500 line-clamp-2 mb-6 flex-1">
-                    {doc.excerpt}
+                    {doc.data.summary || 'No summary available.'}
                   </p>
                   <div className="flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
                     <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       <Clock className="w-3 h-3" />
-                      2 mins ago
+                      {doc.type === 'slides' ? 'Interactive Slide' : 'Detailed Lesson'}
                     </div>
-                    <Star className="w-4 h-4 text-slate-300 group-hover:text-yellow-500 transition-colors" />
+                    <div className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[9px] font-black uppercase text-slate-500">
+                      {doc.type}
+                    </div>
                   </div>
-                </button>
+                </a>
               ))}
 
               <button className="flex flex-col items-center justify-center p-6 bg-slate-50/50 dark:bg-slate-900/30 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl hover:border-primary-500/50 hover:bg-white dark:hover:bg-slate-900 transition-all group">
@@ -184,12 +215,12 @@ export default function App() {
               </div>
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
-                  <div className="text-2xl font-black">12</div>
-                  <div className="text-[10px] uppercase font-bold tracking-wider opacity-60">Modules</div>
+                  <div className="text-2xl font-black">{lessons.length}</div>
+                  <div className="text-[10px] uppercase font-bold tracking-wider opacity-60">Lessons</div>
                 </div>
                 <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
-                  <div className="text-2xl font-black">48</div>
-                  <div className="text-[10px] uppercase font-bold tracking-wider opacity-60">Quizzes</div>
+                  <div className="text-2xl font-black">{slides.length}</div>
+                  <div className="text-[10px] uppercase font-bold tracking-wider opacity-60">Slides</div>
                 </div>
               </div>
             </div>

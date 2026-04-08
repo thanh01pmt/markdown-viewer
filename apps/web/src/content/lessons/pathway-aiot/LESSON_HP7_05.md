@@ -4,14 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.274Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Lesson ID: HP7-05
-  Title: Secure Boot & Flash Encryption - "Ổ khóa" cho bộ não ESP32
-  Phase: Phase 4 | Producing
-  Version: v1.2 | Ngày: 2026-04-08
--->
-
 ![HP7 Security Blueprint - Hardware Shield](file:///Users/tonypham/MEGA/my-agents/packages/the-ultimate-curriculum-agent-os/projects/pathway-aiot/_assets/images/hp7_fortress.png)
 
 

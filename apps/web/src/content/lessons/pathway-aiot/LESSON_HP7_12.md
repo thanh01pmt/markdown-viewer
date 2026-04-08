@@ -4,14 +4,6 @@ program_id: "pathway-aiot"
 type: "lessons"
 date: 2026-04-08T03:54:23.279Z
 ---
-<!-- [SME_MANDATE] -->
-<!-- 
-  Lesson ID: HP7-12
-  Title: Peak Assessment - Xây dựng "Pháo đài số" của Smart Home
-  Phase: Phase 4 | Producing
-  Version: v1.1 | Ngày: 2026-04-08
--->
-
 ![HP7 Security Summit - Final Challenge](file:///Users/tonypham/MEGA/my-agents/packages/the-ultimate-curriculum-agent-os/projects/pathway-aiot/_assets/images/hp7_fortress.png)
 
 
