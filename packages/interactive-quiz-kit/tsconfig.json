@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "types": ["react", "react-dom"],
+    "noEmit": false,
+    "rootDir": "src",
+    "baseUrl": ".",
+    
+    // --- Declaration File Settings ---
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "declarationMap": true,
+
+    "incremental": false,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "files": [
+    "src/index.ts",
+    "src/react-ui.ts",
+    "src/player.ts",
+    "src/client-services.ts",
+    "src/ai.ts",
+    "src/i18n.ts",
+    "src/schemas.ts",
+    "src/react-shim.ts"
+  ],
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "scorm-bundle",
+    "**/*.test.ts",
+    "../../scratch-block-render"
+  ]
+}

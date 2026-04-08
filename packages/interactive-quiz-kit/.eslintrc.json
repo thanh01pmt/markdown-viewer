@@ -1,0 +1,6 @@
+{
+  "extends": ["next", "next/core-web-vitals"],
+  "ignorePatterns": ["dist/**", "scorm-bundle/**"],
+  "env": { "browser": true, "es2021": true },
+  "settings": { "next": { "rootDir": ["./"] } }
+}

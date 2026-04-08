@@ -1,0 +1,414 @@
+/* src/styles/main.css */
+/* Alternative approach: Define CSS custom properties without @apply */
+
+/* src/app/globals.css - Updated version */
+
+/* 1. @import rules MUST be at the very top of the file */
+/* GitHub Dark Theme from highlight.js */
+pre code.hljs {
+	display: block;
+	overflow-x: auto;
+	padding: 1em;
+}
+code.hljs {
+	padding: 3px 5px;
+}
+.hljs {
+	color: #c9d1d9;
+	background: #0d1117;
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+	color: #ff7b72;
+}
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+	color: #d2a8ff;
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+	color: #79c0ff;
+}
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+	color: #a5d6ff;
+}
+.hljs-built_in,
+.hljs-symbol {
+	color: #ffa657;
+}
+.hljs-comment,
+.hljs-code,
+.hljs-formula {
+	color: #8b949e;
+}
+.hljs-name,
+.hljs-quote,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+	color: #7ee787;
+}
+.hljs-subst {
+	color: #c9d1d9;
+}
+.hljs-section {
+	color: #1f6feb;
+	font-weight: bold;
+}
+.hljs-bullet {
+	color: #f2cc60;
+}
+.hljs-emphasis {
+	color: #c9d1d9;
+	font-style: italic;
+}
+.hljs-strong {
+	color: #c9d1d9;
+	font-weight: bold;
+}
+.hljs-addition {
+	color: #aff5b4;
+	background-color: #033a16;
+}
+.hljs-deletion {
+	color: #ffdcd7;
+	background-color: #67060c;
+}
+@import "katex/dist/katex.min.css";
+
+/* 2. Standard Tailwind directives come AFTER imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Custom styles for library components */
+.milkdown-container {
+	background-color: hsl(var(--card));
+}
+
+.milkdown-editor {
+	padding: 0.75rem 1rem;
+	min-height: inherit;
+	outline: none;
+}
+
+.slash-command-item {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	border-radius: 0.25rem;
+	text-align: left;
+	font-size: 0.875rem;
+}
+.slash-command-item:hover {
+	background-color: hsl(var(--accent));
+}
+
+.react-calendar-heatmap text {
+	font-size: 8px;
+	fill: hsl(var(--muted-foreground));
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-month-label {
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.react-calendar-heatmap rect:hover {
+	stroke: hsl(var(--foreground));
+	stroke-width: 2px;
+}
+
+.react-calendar-heatmap .color-empty {
+	fill: hsl(var(--muted) / 0.5);
+}
+
+.react-calendar-heatmap .color-scale-1 {
+	fill: hsl(var(--primary) / 0.2);
+}
+.react-calendar-heatmap .color-scale-2 {
+	fill: hsl(var(--primary) / 0.5);
+}
+.react-calendar-heatmap .color-scale-3 {
+	fill: hsl(var(--primary) / 0.8);
+}
+.react-calendar-heatmap .color-scale-4 {
+	fill: hsl(var(--primary));
+}
+
+.heatmap-tooltip {
+	background-color: hsl(var(--popover)) !important;
+	color: hsl(var(--popover-foreground)) !important;
+	border-radius: 0.375rem !important;
+	border: 1px solid hsl(var(--border)) !important;
+	padding: 0.5rem 0.75rem !important;
+	font-size: 0.875rem !important;
+	box-shadow:
+		0 4px 6px -1px rgb(0 0 0 / 0.1),
+		0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+	pointer-events: none !important;
+}
+
+/* Add these styles to your globals.css to fix prose styling issues */
+
+/* Enhanced prose styles for better markdown rendering */
+.prose {
+	/* Fix heading sizes that might not be showing */
+	--tw-prose-headings: hsl(var(--foreground));
+	--tw-prose-body: hsl(var(--muted-foreground));
+	--tw-prose-links: hsl(var(--primary));
+	--tw-prose-bold: hsl(var(--foreground));
+	--tw-prose-code: hsl(var(--foreground));
+	--tw-prose-pre-code: hsl(var(--muted-foreground));
+	--tw-prose-pre-bg: hsl(var(--muted));
+	--tw-prose-quotes: hsl(var(--foreground));
+	--tw-prose-quote-borders: hsl(var(--border));
+	--tw-prose-captions: hsl(var(--muted-foreground));
+	--tw-prose-th-borders: hsl(var(--border));
+	--tw-prose-td-borders: hsl(var(--border));
+}
+
+.dark .prose {
+	--tw-prose-headings: hsl(var(--foreground));
+	--tw-prose-body: hsl(var(--muted-foreground));
+	--tw-prose-links: hsl(var(--primary));
+	--tw-prose-bold: hsl(var(--foreground));
+	--tw-prose-code: hsl(var(--foreground));
+	--tw-prose-pre-code: hsl(var(--muted-foreground));
+	--tw-prose-pre-bg: hsl(var(--muted));
+	--tw-prose-quotes: hsl(var(--foreground));
+	--tw-prose-quote-borders: hsl(var(--border));
+	--tw-prose-captions: hsl(var(--muted-foreground));
+	--tw-prose-th-borders: hsl(var(--border));
+	--tw-prose-td-borders: hsl(var(--border));
+}
+
+/* Force headings to display correctly if prose is not working */
+.prose h1,
+.prose-slate h1 {
+	font-size: 2.25rem !important;
+	font-weight: 700 !important;
+	line-height: 2.5rem !important;
+	margin-top: 2rem !important;
+	margin-bottom: 1rem !important;
+	color: hsl(var(--foreground)) !important;
+}
+
+.prose h2,
+.prose-slate h2 {
+	font-size: 1.875rem !important;
+	font-weight: 600 !important;
+	line-height: 2.25rem !important;
+	margin-top: 1.5rem !important;
+	margin-bottom: 0.75rem !important;
+	color: hsl(var(--foreground)) !important;
+}
+
+.prose h3,
+.prose-slate h3 {
+	font-size: 1.5rem !important;
+	font-weight: 500 !important;
+	line-height: 2rem !important;
+	margin-top: 1.25rem !important;
+	margin-bottom: 0.5rem !important;
+	color: hsl(var(--foreground)) !important;
+}
+
+/* Override any conflicting styles */
+.prose h1:first-child,
+.prose-slate h1:first-child {
+	margin-top: 0 !important;
+}
+
+/* Ensure math formulas display correctly */
+.prose .katex {
+	font-size: 1em;
+}
+
+.prose .katex-display {
+	margin: 1.5rem 0;
+	text-align: center;
+}
+
+/* Code block enhancements */
+.prose pre {
+	background-color: hsl(var(--muted)) !important;
+	border: 1px solid hsl(var(--border));
+	border-radius: 0.5rem;
+	padding: 1rem !important;
+	overflow-x: auto;
+}
+
+.prose code {
+	background-color: hsl(var(--muted)) !important;
+	border: 1px solid hsl(var(--border));
+	border-radius: 0.25rem;
+	padding: 0.125rem 0.25rem !important;
+	font-size: 0.875em !important;
+}
+
+.prose pre code {
+	background-color: transparent !important;
+	border: none !important;
+	padding: 0 !important;
+}
+
+/* Table styling */
+.prose table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.prose th,
+.prose td {
+	border: 1px solid hsl(var(--border));
+	padding: 0.5rem 0.75rem;
+	text-align: left;
+}
+
+.prose th {
+	background-color: hsl(var(--muted));
+	font-weight: 600;
+}
+
+/* Video container fallback */
+.video-container {
+	position: relative;
+	width: 100%;
+	height: 0;
+	padding-bottom: 56.25%; /* 16:9 aspect ratio */
+	margin: 1.5rem 0;
+}
+
+.video-container iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 0.5rem;
+	border: none;
+}
+
+/* 4. The @layer block containing CSS variables and base styles */
+@layer base {
+	:root {
+		--background: 0 0% 96.1%; /* #F5F5F5 */
+		--foreground: 0 0% 3.9%; /* #0A0A0A */
+
+		--card: 0 0% 100%; /* #FFFFFF */
+		--card-foreground: 0 0% 3.9%; /* #0A0A0A */
+
+		--popover: 0 0% 100%; /* #FFFFFF */
+		--popover-foreground: 0 0% 3.9%; /* #0A0A0A */
+
+		--primary: 197 71% 53%; /* #29ABE2 */
+		--primary-foreground: 0 0% 100%; /* #FFFFFF */
+
+		--secondary: 0 0% 90%; /* #E5E5E5 */
+		--secondary-foreground: 0 0% 9%; /* #171717 */
+
+		--muted: 0 0% 90%; /* #E5E5E5 */
+		--muted-foreground: 0 0% 45.1%; /* #737373 */
+
+		--accent: 33 100% 50%; /* #FF8C00 */
+		--accent-foreground: 0 0% 100%; /* #FFFFFF */
+
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 0 0% 98%;
+
+		--border: 0 0% 85%; /* #D9D9D9 */
+		--input: 0 0% 85%; /* #D9D9D9 */
+		--ring: 197 71% 53%; /* Primary color for ring */
+
+		--radius: 0.5rem;
+
+		/* Sidebar specific variables */
+		--sidebar-background: 0 0% 98%;
+		--sidebar-foreground: 0 0% 20%;
+		--sidebar-primary: 197 71% 53%;
+		--sidebar-primary-foreground: 0 0% 100%;
+		--sidebar-accent: 0 0% 92%;
+		--sidebar-accent-foreground: 0 0% 9%;
+		--sidebar-border: 0 0% 85%;
+		--sidebar-ring: 197 71% 53%;
+
+		--chart-1: 12 76% 61%;
+		--chart-2: 173 58% 39%;
+		--chart-3: 197 37% 24%;
+		--chart-4: 43 74% 66%;
+		--chart-5: 27 87% 67%;
+	}
+
+	* {
+		border-color: hsl(var(--border));
+	}
+
+	body {
+		background-color: hsl(var(--background));
+		color: hsl(var(--foreground));
+	}
+
+	.dark {
+		--background: 0 0% 3.9%;
+		--foreground: 0 0% 98%;
+
+		--card: 0 0% 3.9%;
+		--card-foreground: 0 0% 98%;
+
+		--popover: 0 0% 3.9%;
+		--popover-foreground: 0 0% 98%;
+
+		--primary: 197 71% 53%;
+		--primary-foreground: 0 0% 100%;
+
+		--secondary: 0 0% 14.9%;
+		--secondary-foreground: 0 0% 98%;
+
+		--muted: 0 0% 14.9%;
+		--muted-foreground: 0 0% 63.9%;
+
+		--accent: 33 100% 50%;
+		--accent-foreground: 0 0% 100%;
+
+		--destructive: 0 62.8% 30.6%;
+		--destructive-foreground: 0 0% 98%;
+
+		--border: 0 0% 14.9%;
+		--input: 0 0% 14.9%;
+		--ring: 197 71% 53%;
+
+		--sidebar-background: 0 0% 10%;
+		--sidebar-foreground: 0 0% 95%;
+		--sidebar-primary: 197 71% 53%;
+		--sidebar-primary-foreground: 0 0% 100%;
+		--sidebar-accent: 0 0% 15.9%;
+		--sidebar-accent-foreground: 0 0% 95%;
+		--sidebar-border: 0 0% 15.9%;
+		--sidebar-ring: 197 71% 53%;
+
+		--chart-1: 220 70% 50%;
+		--chart-2: 160 60% 45%;
+		--chart-3: 30 80% 55%;
+		--chart-4: 280 65% 60%;
+		--chart-5: 340 75% 55%;
+	}
+}

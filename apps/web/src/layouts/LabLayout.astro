@@ -1,0 +1,55 @@
+---
+import MainLayout from './MainLayout.astro';
+import { type CollectionEntry } from 'astro:content';
+import CodeRunner from '../components/renderers/CodeRunner';
+import { Sidebar, type NavItem } from '../components/Navigation/Sidebar';
+
+interface Props {
+  lab: CollectionEntry<'labs'>;
+  programId: string;
+  lessons: NavItem[];
+  slides: NavItem[];
+  activities: NavItem[];
+  currentSlug: string;
+}
+
+const { lab, programId, lessons, slides, activities, currentSlug } = Astro.props;
+const { title, description, environment } = lab.data;
+---
+
+<MainLayout title={title} description={description}>
+  <div class="flex h-screen bg-slate-900 border-t border-slate-800">
+    <Sidebar 
+      client:load 
+      programId={programId} 
+      lessons={lessons} 
+      slides={slides} 
+      activities={activities} 
+      currentSlug={currentSlug} 
+    />
+    <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="h-14 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur-md">
+      <div class="flex items-center gap-4">
+        <h1 class="text-white font-semibold">{title}</h1>
+        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-xs font-mono uppercase tracking-tight">
+          {environment}
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="bg-primary-600 hover:bg-primary-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-all shadow-lg shadow-primary-900/20">
+          Run Code
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+      <div class="w-1/3 border-r border-slate-800 overflow-auto bg-slate-950 p-6 prose prose-invert prose-slate prose-sm max-w-none">
+        <slot />
+      </div>
+      
+      <div class="flex-1 relative">
+        <CodeRunner client:load environment={environment} files={lab.data.files} content={lab.body} />
+      </div>
+    </main>
+  </div>
+</MainLayout>

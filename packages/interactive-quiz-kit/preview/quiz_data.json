@@ -1,0 +1,573 @@
+{
+  "id": "sample-quiz-001",
+  "title": "Sample Quiz for Testers",
+  "description": "A short quiz with a few different question types to test the QuizKit functionality.",
+  "questions": [
+    {
+      "id": "mcq_mn8jnkwh0963p",
+      "questionTypeCode": "MULTIPLE_CHOICE",
+      "prompt": "**Test Code Blocks Rendering**\n  \n### 1. Inline Code\nNormal inline code: `const x = 10;` should look like code.\nScratch inline code: `move (10) steps` should render as a scratch block.\nScratch inline mixed: `turn right (15) degrees` and `say [Hello!] for (2) secs`.\n\n### 2. Fence Code Blocks\n\n**Python:**\n```python\ndef hello():\n    print(\"Hello Markdown\")\n```\n\n**JavaScript:**\n```javascript\nconst arr = [1, 2, 3];\narr.map(x => x * 2);\n```\n\n**Scratch (Fence):**\n```scratch\nwhen green flag clicked\nmove (10) steps\nturn right (15) degrees\nsay [Hello!] for (2) secs\n```\n\n### 3. Edge Cases\n- Empty code block: ``` ```\n- Plain text block:\n```text\nPlain text content\n```\n",
+      "options": [
+        {
+          "id": "opt_mn8jnkwh2f9mw",
+          "text": "All render correctly"
+        },
+        {
+          "id": "opt_mn8jnkwhjhm3h",
+          "text": "Scratch inline broken"
+        },
+        {
+          "id": "opt_mn8jnkwhafe0o",
+          "text": "Scratch fence broken"
+        },
+        {
+          "id": "opt_mn8jnkwhzu5aw",
+          "text": "Standard fence broken"
+        }
+      ],
+      "correctAnswerId": "opt_mn8jnkwh2f9mw",
+      "points": 5,
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "TEST_RENDERING"
+        ]
+      }
+    },
+    {
+      "id": "tfq_mn8jnkwhpw5wb",
+      "questionTypeCode": "TRUE_FALSE",
+      "prompt": "Bầu trời có màu xanh do hiện tượng tán xạ Rayleigh.",
+      "correctAnswer": true,
+      "points": 10,
+      "explanation": "Tán xạ Rayleigh khiến ánh sáng xanh tán xạ nhiều hơn các màu khác vì nó truyền đi dưới dạng sóng ngắn hơn, nhỏ hơn.",
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "PHYSICS_OPTICS_01"
+        ]
+      }
+    },
+    {
+      "id": "mcq_mn8jnkwhf5umj",
+      "questionTypeCode": "MULTIPLE_CHOICE",
+      "prompt": "Thủ đô của Pháp là gì?",
+      "options": [
+        {
+          "id": "opt_mn8jnkwhsz597",
+          "text": "Berlin"
+        },
+        {
+          "id": "opt_mn8jnkwh1ypka",
+          "text": "Madrid"
+        },
+        {
+          "id": "opt_mn8jnkwh6gmk0",
+          "text": "Paris"
+        },
+        {
+          "id": "opt_mn8jnkwh14r2s",
+          "text": "Rome"
+        }
+      ],
+      "correctAnswerId": "opt_mn8jnkwh6gmk0",
+      "points": 15,
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "GEO_CAPITALS_EU_01"
+        ]
+      }
+    },
+    {
+      "id": "mrq_mn8jnkwhi2i5z",
+      "questionTypeCode": "MULTIPLE_RESPONSE",
+      "prompt": "Những hành tinh nào sau đây thuộc Hệ Mặt Trời có vành đai (rings)?",
+      "options": [
+        {
+          "id": "opt_mn8jnkwhffki5",
+          "text": "Sao Thổ (Saturn)"
+        },
+        {
+          "id": "opt_mn8jnkwhcgeeh",
+          "text": "Sao Mộc (Jupiter)"
+        },
+        {
+          "id": "opt_mn8jnkwhrjyfk",
+          "text": "Sao Thiên Vương (Uranus)"
+        },
+        {
+          "id": "opt_mn8jnkwhsu71t",
+          "text": "Sao Hải Vương (Neptune)"
+        },
+        {
+          "id": "opt_mn8jnkwhv1n01",
+          "text": "Trái Đất (Earth)"
+        }
+      ],
+      "correctAnswerIds": [
+        "opt_mn8jnkwhffki5",
+        "opt_mn8jnkwhcgeeh",
+        "opt_mn8jnkwhrjyfk",
+        "opt_mn8jnkwhsu71t"
+      ],
+      "points": 20,
+      "explanation": "Sao Thổ nổi tiếng với hệ thống vành đai phức tạp. Sao Mộc, Sao Thiên Vương và Sao Hải Vương cũng có vành đai, mặc dù chúng mờ hơn và khó quan sát hơn nhiều so với vành đai của Sao Thổ.",
+      "difficultyCode": "MEDIUM",
+      "meta": {
+        "learningObjectiveCodes": [
+          "ASTRONOMY_SOLAR_SYSTEM_02"
+        ]
+      }
+    },
+    {
+      "id": "saq_mn8jnkwhq27q7",
+      "questionTypeCode": "SHORT_ANSWER",
+      "prompt": "Ngôn ngữ lập trình nào thường được sử dụng chủ yếu cho phát triển web phía client-side để làm cho các trang web trở nên tương tác?",
+      "acceptedAnswers": [
+        "JavaScript",
+        "Javascript",
+        "javascript",
+        "JS",
+        "js"
+      ],
+      "points": 10,
+      "explanation": "JavaScript là ngôn ngữ kịch bản chính chạy trên trình duyệt của người dùng để tạo ra các trang web tương tác.",
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "PROG_WEB_FRONTEND_01"
+        ]
+      },
+      "isCaseSensitive": false
+    },
+    {
+      "id": "nq_mn8jnkwha1jn6",
+      "questionTypeCode": "NUMERIC",
+      "prompt": "Nhiệt độ sôi của nước ở áp suất khí quyển tiêu chuẩn là bao nhiêu độ C?",
+      "answer": 100,
+      "tolerance": 1,
+      "points": 10,
+      "explanation": "Nước sôi ở 100 độ C (212 độ F) ở áp suất khí quyển tiêu chuẩn.",
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "CHEM_PROPERTIES_01"
+        ]
+      }
+    },
+    {
+      "id": "fitb_mn8jnkwhrm4fz",
+      "questionTypeCode": "FILL_IN_THE_BLANKS",
+      "prompt": "Điền vào chỗ trống để hoàn thành câu sau:",
+      "segments": [
+        {
+          "type": "text",
+          "content": "Nước được cấu tạo từ hai nguyên tố là "
+        },
+        {
+          "type": "blank",
+          "id": "fitb_h"
+        },
+        {
+          "type": "text",
+          "content": " và "
+        },
+        {
+          "type": "blank",
+          "id": "fitb_o"
+        },
+        {
+          "type": "text",
+          "content": "."
+        }
+      ],
+      "answers": [
+        {
+          "blankId": "fitb_h",
+          "acceptedValues": [
+            "Hydro",
+            "Hydrogen",
+            "H"
+          ]
+        },
+        {
+          "blankId": "fitb_o",
+          "acceptedValues": [
+            "Oxy",
+            "Oxygen",
+            "O"
+          ]
+        }
+      ],
+      "isCaseSensitive": false,
+      "points": 15,
+      "explanation": "Nước (H₂O) được tạo thành từ hai nguyên tử Hydro và một nguyên tử Oxy.",
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "CHEM_BASICS_01"
+        ]
+      }
+    },
+    {
+      "id": "seqq_mn8jnkwhp155d",
+      "questionTypeCode": "SEQUENCE",
+      "prompt": "Sắp xếp các hành tinh sau theo thứ tự từ gần Mặt Trời nhất đến xa nhất:",
+      "items": [
+        {
+          "id": "seqi_mn8jnkwhs60th",
+          "content": "Sao Hỏa (Mars)"
+        },
+        {
+          "id": "seqi_mn8jnkwhnyegq",
+          "content": "Trái Đất (Earth)"
+        },
+        {
+          "id": "seqi_mn8jnkwhslq6w",
+          "content": "Sao Thủy (Mercury)"
+        },
+        {
+          "id": "seqi_mn8jnkwhsfinn",
+          "content": "Sao Kim (Venus)"
+        }
+      ],
+      "correctOrder": [
+        "seqi_mn8jnkwhslq6w",
+        "seqi_mn8jnkwhsfinn",
+        "seqi_mn8jnkwhnyegq",
+        "seqi_mn8jnkwhs60th"
+      ],
+      "points": 20,
+      "explanation": "Thứ tự đúng của các hành tinh từ gần Mặt Trời nhất là: Sao Thủy, Sao Kim, Trái Đất, Sao Hỏa.",
+      "difficultyCode": "MEDIUM",
+      "meta": {
+        "learningObjectiveCodes": [
+          "ASTRONOMY_SOLAR_SYSTEM_01"
+        ]
+      }
+    },
+    {
+      "id": "matq_mn8jnkwhil4s8",
+      "questionTypeCode": "MATCHING",
+      "prompt": "Hãy ghép mỗi quốc gia với thủ đô tương ứng.",
+      "prompts": [
+        {
+          "id": "matp_mn8jnkwhq8q0a",
+          "content": "Việt Nam"
+        },
+        {
+          "id": "matp_mn8jnkwh0cu8r",
+          "content": "Nhật Bản"
+        },
+        {
+          "id": "matp_mn8jnkwhdcp4f",
+          "content": "Hoa Kỳ"
+        }
+      ],
+      "options": [
+        {
+          "id": "mato_mn8jnkwhvjaja",
+          "content": "Tokyo"
+        },
+        {
+          "id": "mato_mn8jnkwhq8g6i",
+          "content": "Hà Nội"
+        },
+        {
+          "id": "mato_mn8jnkwhohn6p",
+          "content": "Washington D.C."
+        }
+      ],
+      "correctAnswerMap": [
+        {
+          "promptId": "matp_mn8jnkwhq8q0a",
+          "optionId": "mato_mn8jnkwhq8g6i"
+        },
+        {
+          "promptId": "matp_mn8jnkwh0cu8r",
+          "optionId": "mato_mn8jnkwhvjaja"
+        },
+        {
+          "promptId": "matp_mn8jnkwhdcp4f",
+          "optionId": "mato_mn8jnkwhohn6p"
+        }
+      ],
+      "points": 15,
+      "explanation": "Hà Nội là thủ đô của Việt Nam, Tokyo là của Nhật Bản, và Washington D.C. là của Hoa Kỳ.",
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "GEO_CAPITALS_AS_NA_01"
+        ]
+      },
+      "shuffleOptions": true
+    },
+    {
+      "id": "dndq_mn8jnkwhfqm6y",
+      "questionTypeCode": "DRAG_AND_DROP",
+      "prompt": "Kéo các loại trái cây vào đúng giỏ màu của chúng (theo logic ghép nối đơn giản).",
+      "draggableItems": [
+        {
+          "id": "dndi_mn8jnkwhzh2gw",
+          "content": "Táo"
+        },
+        {
+          "id": "dndi_mn8jnkwhgrpm2",
+          "content": "Chuối"
+        },
+        {
+          "id": "dndi_mn8jnkwhzfidq",
+          "content": "Cam"
+        }
+      ],
+      "dropZones": [
+        {
+          "id": "dndz_mn8jnkwhx04zm",
+          "label": "Giỏ Đỏ"
+        },
+        {
+          "id": "dndz_mn8jnkwh0wwip",
+          "label": "Giỏ Vàng"
+        },
+        {
+          "id": "dndz_mn8jnkwhylk03",
+          "label": "Giỏ Cam"
+        }
+      ],
+      "answerMap": [
+        {
+          "draggableId": "dndi_mn8jnkwhzh2gw",
+          "dropZoneId": "dndz_mn8jnkwhx04zm"
+        },
+        {
+          "draggableId": "dndi_mn8jnkwhgrpm2",
+          "dropZoneId": "dndz_mn8jnkwh0wwip"
+        },
+        {
+          "draggableId": "dndi_mn8jnkwhzfidq",
+          "dropZoneId": "dndz_mn8jnkwhylk03"
+        }
+      ],
+      "points": 15,
+      "explanation": "Táo thường có màu đỏ (giỏ đỏ), chuối màu vàng (giỏ vàng), và cam có màu cam (giỏ cam).",
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "EARLY_LEARNING_COLORS_01"
+        ]
+      },
+      "backgroundImageUrl": "https://placehold.co/600x200.png",
+      "imageAltText": "colored baskets"
+    },
+    {
+      "id": "hsq_mn8jnkwhsrzck",
+      "questionTypeCode": "HOTSPOT",
+      "prompt": "Nhấp vào (các) động cơ của máy bay trong hình.",
+      "imageUrl": "https://placehold.co/600x400.png",
+      "imageAltText": "airplane diagram",
+      "hotspots": [
+        {
+          "id": "hs_mn8jnkwhe7hy2",
+          "shape": "rect",
+          "coords": [
+            150,
+            200,
+            80,
+            60
+          ],
+          "description": "Động cơ bên trái"
+        },
+        {
+          "id": "hs_mn8jnkwhl17vk",
+          "shape": "rect",
+          "coords": [
+            370,
+            200,
+            80,
+            60
+          ],
+          "description": "Động cơ bên phải"
+        },
+        {
+          "id": "hs_mn8jnkwhe5sfo",
+          "shape": "rect",
+          "coords": [
+            250,
+            120,
+            100,
+            70
+          ],
+          "description": "Buồng lái"
+        }
+      ],
+      "correctHotspotIds": [
+        "hs_mn8jnkwhe7hy2",
+        "hs_mn8jnkwhl17vk"
+      ],
+      "points": 15,
+      "explanation": "Máy bay này có hai động cơ chính, nằm dưới cánh.",
+      "difficultyCode": "MEDIUM",
+      "meta": {
+        "learningObjectiveCodes": [
+          "AVIATION_PARTS_01"
+        ]
+      }
+    },
+    {
+      "id": "blkq_mn8jnkwh9wirb",
+      "questionTypeCode": "BLOCKLY_PROGRAMMING",
+      "prompt": "Sử dụng các khối lệnh để tạo một chương trình in ra dòng chữ 'Hello, World!' vào console.",
+      "points": 25,
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "PROG_BASICS_OUTPUT_01"
+        ]
+      },
+      "toolboxDefinition": "\n    <xml xmlns=\"https://developers.google.com/blockly/xml\">\n      <category name=\"Text\" colour=\"%{BKY_TEXTS_HUE}\">\n        <block type=\"text\"></block>\n        <block type=\"text_print\"></block>\n      </category>\n    </xml>\n  ",
+      "initialWorkspace": "\n    <xml xmlns=\"https://developers.google.com/blockly/xml\">\n      <block type=\"text_print\" id=\"blki_mn8jnkwhmq9mx\" x=\"70\" y=\"70\">\n        <value name=\"TEXT\">\n          <shadow type=\"text\" id=\"blki_mn8jnkwh8teq4\">\n            <field name=\"TEXT\">abc</field>\n          </shadow>\n        </value>\n      </block>\n    </xml>\n  ",
+      "solutionWorkspaceXML": "\n    <xml xmlns=\"https://developers.google.com/blockly/xml\">\n      <block type=\"text_print\" id=\"blki_solution_mn8jnkwh74a9j\" x=\"70\" y=\"70\">\n        <value name=\"TEXT\">\n          <block type=\"text\" id=\"blki_text_solution_mn8jnkwhpwpnb\">\n            <field name=\"TEXT\">Hello, World!</field>\n          </block>\n        </value>\n      </block>\n    </xml>\n  ",
+      "solutionGeneratedCode": "window.alert('Hello, World!');",
+      "explanation": "Chương trình cần sử dụng khối 'print' với đầu vào là khối văn bản chứa 'Hello, World!'."
+    },
+    {
+      "id": "scrq_mn8jnkwhgbm6v",
+      "questionTypeCode": "SCRATCH_PROGRAMMING",
+      "prompt": "Dùng khối lệnh Scratch để di chuyển nhân vật về phía trước `move (10) steps` khi cờ xanh được click.",
+      "points": 20,
+      "difficultyCode": "EASY",
+      "meta": {
+        "learningObjectiveCodes": [
+          "SCRATCH_BASICS_MOTION_01"
+        ]
+      },
+      "toolboxDefinition": "\n    <xml xmlns=\"https://developers.google.com/blockly/xml\">\n      <category name=\"Motion\" categorystyle=\"motion\">\n        <block type=\"motion_movesteps\"></block>\n      </category>\n      <category name=\"Events\" categorystyle=\"events\">\n        <block type=\"event_whenflagclicked\"></block>\n      </category>\n    </xml>\n  ",
+      "initialWorkspace": "\n    <xml xmlns=\"https://developers.google.com/blockly/xml\"></xml>\n  ",
+      "solutionWorkspaceXML": "\n    <xml xmlns=\"https://developers.google.com/blockly/xml\">\n      <block type=\"event_whenflagclicked\" id=\"scr_event_mn8jnkwh9e4le\" x=\"50\" y=\"50\">\n        <next>\n          <block type=\"motion_movesteps\" id=\"scr_motion_mn8jnkwhv9o2l\">\n            <value name=\"STEPS\">\n              <shadow type=\"math_number\">\n                <field name=\"NUM\">10</field>\n              </shadow>\n            </value>\n          </block>\n        </next>\n      </block>\n    </xml>\n  ",
+      "solutionGeneratedCode": "whenGreenFlagClicked(() => { move(10); });",
+      "explanation": "Sử dụng khối 'when green flag clicked' từ Events và khối 'move 10 steps' từ Motion.\n\n```scratch\nwhen green flag clicked\nmove (10) steps\n```"
+    },
+    {
+      "id": "codeq_mn8jnkwhoz5eq",
+      "questionTypeCode": "CODING",
+      "prompt": "Viết hàm `find_max(numbers)` nhận vào một danh sách các số nguyên và trả về số lớn nhất trong danh sách đó. Giả định danh sách không rỗng.",
+      "points": 30,
+      "difficultyCode": "MEDIUM",
+      "meta": {
+        "learningObjectiveCodes": [
+          "PROG_PY_ALGO_01"
+        ]
+      },
+      "codingLanguage": "python",
+      "functionSignature": "def find_max(numbers):\n    # Viết mã của bạn ở đây\n    pass",
+      "solutionCode": "def find_max(numbers):\n    return max(numbers)",
+      "testCases": [
+        {
+          "id": "tc1",
+          "input": [
+            [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ],
+          "expectedOutput": 5,
+          "isPublic": true
+        },
+        {
+          "id": "tc2",
+          "input": [
+            [
+              -10,
+              -5,
+              -20
+            ]
+          ],
+          "expectedOutput": -5,
+          "isPublic": true
+        },
+        {
+          "id": "tc3",
+          "input": [
+            [
+              100
+            ]
+          ],
+          "expectedOutput": 100,
+          "isPublic": false
+        }
+      ],
+      "explanation": "Sử dụng hàm build-in `max()` của Python để tìm giá trị lớn nhất một cách hiệu quả."
+    },
+    {
+      "id": "codeq_lua_mn8jnkwhvobtk",
+      "questionTypeCode": "CODING",
+      "prompt": "Viết hàm `square(n)` trong Lua trả về bình phương của số `n`.",
+      "points": 20,
+      "difficultyCode": "EASY",
+      "codingLanguage": "lua",
+      "functionSignature": "function square(n)\n    -- Viết mã ở đây\nend",
+      "solutionCode": "function square(n)\n    return n * n\nend",
+      "testCases": [
+        {
+          "id": "tc1",
+          "input": [
+            5
+          ],
+          "expectedOutput": 25,
+          "isPublic": true
+        },
+        {
+          "id": "tc2",
+          "input": [
+            -3
+          ],
+          "expectedOutput": 9,
+          "isPublic": true
+        }
+      ],
+      "explanation": "Trong Lua, toán tử nhân là `*`. Hàm trả về giá trị bằng từ khóa `return`."
+    },
+    {
+      "id": "codeq_c_mn8jnkwhddsf9",
+      "questionTypeCode": "CODING",
+      "prompt": "Viết hàm `add(a, b)` trong C trả về tổng của hai số nguyên.",
+      "points": 20,
+      "difficultyCode": "EASY",
+      "codingLanguage": "c",
+      "functionSignature": "int add(int a, int b) {\n    // Viết mã ở đây\n}",
+      "solutionCode": "int add(int a, int b) {\n    return a + b;\n}",
+      "testCases": [
+        {
+          "id": "tc1",
+          "input": [
+            10,
+            20
+          ],
+          "expectedOutput": 30,
+          "isPublic": true
+        },
+        {
+          "id": "tc2",
+          "input": [
+            -1,
+            5
+          ],
+          "expectedOutput": 4,
+          "isPublic": true
+        }
+      ],
+      "explanation": "Hàm trong C cần khai báo kiểu trả về. Sử dụng toán tử `+` để cộng hai số."
+    }
+  ],
+  "settings": {
+    "shuffleQuestions": true,
+    "shuffleOptions": true,
+    "showCorrectAnswers": "end_of_quiz",
+    "passingScorePercent": 70,
+    "timeLimitMinutes": 25
+  }
+}
