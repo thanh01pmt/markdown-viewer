@@ -2,17 +2,32 @@
 import MainLayout from './MainLayout.astro';
 import { type CollectionEntry } from 'astro:content';
 import CodeRunner from '../components/renderers/CodeRunner';
+import { Sidebar, type NavItem } from '../components/Navigation/Sidebar';
 
 interface Props {
   lab: CollectionEntry<'labs'>;
+  programId: string;
+  lessons: NavItem[];
+  slides: NavItem[];
+  activities: NavItem[];
+  currentSlug: string;
 }
 
-const { lab } = Astro.props;
+const { lab, programId, lessons, slides, activities, currentSlug } = Astro.props;
 const { title, description, environment } = lab.data;
 ---
 
 <MainLayout title={title} description={description}>
-  <div class="h-screen flex flex-col bg-slate-900 border-t border-slate-800">
+  <div class="flex h-screen bg-slate-900 border-t border-slate-800">
+    <Sidebar 
+      client:load 
+      programId={programId} 
+      lessons={lessons} 
+      slides={slides} 
+      activities={activities} 
+      currentSlug={currentSlug} 
+    />
+    <div class="flex-1 flex flex-col overflow-hidden">
     <header class="h-14 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur-md">
       <div class="flex items-center gap-4">
         <h1 class="text-white font-semibold">{title}</h1>

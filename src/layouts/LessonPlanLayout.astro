@@ -1,23 +1,31 @@
 ---
 import MainLayout from './MainLayout.astro';
 import { type CollectionEntry } from 'astro:content';
+import { Sidebar, type NavItem } from '../components/Navigation/Sidebar';
 
 interface Props {
   lesson: CollectionEntry<'lessons'>;
+  programId: string;
+  lessons: NavItem[];
+  slides: NavItem[];
+  activities: NavItem[];
+  currentSlug: string;
 }
 
-const { lesson } = Astro.props;
+const { lesson, programId, lessons, slides, activities, currentSlug } = Astro.props;
 const { title, description, duration, difficulty } = lesson.data;
 ---
 
 <MainLayout title={title} description={description}>
   <div class="flex min-h-screen bg-slate-50 dark:bg-slate-900">
-    <aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hidden md:block">
-      <!-- Sidebar content will go here -->
-      <div class="p-6">
-        <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Course Content</h2>
-      </div>
-    </aside>
+    <Sidebar 
+      client:load 
+      programId={programId} 
+      lessons={lessons} 
+      slides={slides} 
+      activities={activities} 
+      currentSlug={currentSlug} 
+    />
 
     <main class="flex-1 overflow-auto">
       <article class="max-w-4xl mx-auto px-6 py-12">

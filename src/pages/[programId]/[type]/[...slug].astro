@@ -14,27 +14,39 @@ export async function getStaticPaths() {
       const parts = entry.id.split('/');
       const programId = parts[0];
       const slug = parts.slice(1).join('/').replace('.mdx', '');
+      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'lessons' }));
+      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'slides' }));
+      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'activities' }));
+
       return {
         params: { programId, type: 'lessons', slug },
-        props: { entry, contentType: 'lessons' }
+        props: { entry, contentType: 'lessons', programId, lessons, slides, activities, currentSlug: slug }
       };
     }),
     ...slideEntries.map(entry => {
       const parts = entry.id.split('/');
       const programId = parts[0];
       const slug = parts.slice(1).join('/').replace('.mdx', '');
+      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'lessons' }));
+      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'slides' }));
+      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'activities' }));
+
       return {
         params: { programId, type: 'slides', slug },
-        props: { entry, contentType: 'slides' }
+        props: { entry, contentType: 'slides', programId, lessons, slides, activities, currentSlug: slug }
       };
     }),
     ...activityEntries.map(entry => {
       const parts = entry.id.split('/');
       const programId = parts[0];
       const slug = parts.slice(1).join('/').replace('.mdx', '');
+      const lessons = lessonEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'lessons' }));
+      const slides = slideEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'slides' }));
+      const activities = activityEntries.filter(e => e.id.startsWith(programId + '/')).map(e => ({ title: e.data.title, slug: e.id.split('/').slice(1).join('/').replace('.mdx', ''), type: 'activities' }));
+
       return {
         params: { programId, type: 'activities', slug },
-        props: { entry, contentType: 'activities' }
+        props: { entry, contentType: 'activities', programId, lessons, slides, activities, currentSlug: slug }
       };
     }),
   ];
@@ -42,22 +54,43 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { entry, contentType } = Astro.props;
+const { entry, contentType, programId, lessons, slides, activities, currentSlug } = Astro.props;
 const { Content } = await (entry as any).render();
 ---
 
 {contentType === 'lessons' && (
-  <LessonLayout lesson={entry}>
+  <LessonLayout 
+    lesson={entry} 
+    programId={programId} 
+    lessons={lessons} 
+    slides={slides} 
+    activities={activities} 
+    currentSlug={currentSlug}
+  >
     <Content />
   </LessonLayout>
 )}
 
 {contentType === 'slides' && (
-  <SlideLayout slide={entry} />
+  <SlideLayout 
+    slide={entry} 
+    programId={programId} 
+    lessons={lessons} 
+    slides={slides} 
+    activities={activities} 
+    currentSlug={currentSlug}
+  />
 )}
 
 {contentType === 'activities' && (
-  <ActivityLayout lab={entry}>
+  <ActivityLayout 
+    lab={entry} 
+    programId={programId} 
+    lessons={lessons} 
+    slides={slides} 
+    activities={activities} 
+    currentSlug={currentSlug}
+  >
     <Content />
   </ActivityLayout>
 )}
