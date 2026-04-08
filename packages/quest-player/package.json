@@ -1,0 +1,10 @@
+{
+  "name": "@thanh01.pmt/quest-player",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

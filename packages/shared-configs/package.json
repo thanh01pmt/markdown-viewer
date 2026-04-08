@@ -1,0 +1,10 @@
+{
+  "name": "@qms/shared-configs",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./index.js",
+  "exports": {
+    "./tailwind": "./tailwind/theme.css",
+    "./typescript/base": "./typescript/base.json"
+  }
+}
