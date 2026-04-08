@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "system-ui", "-apple-system", "sans-serif";
+  --color-primary-50: oklch(0.962 0.018 272.314);
+  --color-primary-100: oklch(0.93 0.034 272.788);
+  --color-primary-500: oklch(0.627 0.265 303.891);
+  --color-primary-600: oklch(0.552 0.244 304.032);
+  --color-primary-700: oklch(0.481 0.211 303.715);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+}
+
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(1 0 0);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
