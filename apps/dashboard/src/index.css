@@ -586,3 +586,52 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .outline-dialog .outline-item--h3 { padding-left: 52px; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+/* ── Metadata Badges (Extracted Comments) ────────────────────── */
+.md-meta-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.md-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--text2);
+}
+
+.md-meta-badge.sme-mandate {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--blue);
+}
+
+.md-meta-label {
+  padding: 4px 8px;
+  background: var(--bg3);
+  font-weight: 500;
+  display: inline-block;
+}
+
+.md-meta-badge.sme-mandate .md-meta-label {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-right: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.md-meta-value {
+  padding: 4px 8px;
+  opacity: 0.9;
+  display: inline-block;
+  border-left: 1px solid var(--border);
+}
+
+.md-meta-badge.sme-mandate .md-meta-value {
+  border-left: none;
+}

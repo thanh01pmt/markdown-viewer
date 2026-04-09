@@ -29,25 +29,92 @@ function CodeBlock({ language, children }) {
   );
 }
 
-/**
- * Strip YAML frontmatter (lines between leading --- delimiters)
- * Also handles @content annotations and other non-markdown metadata lines
- */
-function stripFrontmatter(content) {
-  if (!content) return '';
+function extractMetadata(content) {
+  if (!content) return { processedContent: '', mdMeta: [] };
+
+  let stripped = content;
+  let mdMeta = [];
 
   // Strip standard YAML frontmatter: --- ... ---
-  const fmRegex = /^---\s*\n[\s\S]*?\n---\s*\n?/;
-  let stripped = content.replace(fmRegex, '');
+  const fmRegex = /^---\s*\n([\s\S]*?)\n---\s*\n?/;
+  const fmMatch = stripped.match(fmRegex);
+  if (fmMatch) {
+    stripped = stripped.replace(fmRegex, '');
+  }
 
-  // Strip @content annotation lines (e.g.: "@content | Phiên bản: ...")
-  // These are italic-rendered lines that start with @
-  stripped = stripped.replace(/^@\S+[^\n]*\n?/gm, '');
+  // Strip HTML comments and extract metadata
+  const htmlCommentRegex = /<!--([\s\S]*?)-->/g;
+  stripped = stripped.replace(htmlCommentRegex, (match, innerText) => {
+    const text = innerText.trim();
+    if (text.includes('SME_MANDATE') || text.includes(':')) {
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      lines.forEach(line => {
+        if (line.includes('[SME_MANDATE]')) {
+          mdMeta.push({ label: 'SME MANDATE', isPrimary: true });
+          return;
+        }
+        
+        const parts = line.split('|');
+        let currentKey = null;
+        let currentValue = '';
+
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i].trim();
+          const colonIdx = part.indexOf(':');
+          
+          if (colonIdx > 0 && colonIdx < 30) { 
+             if (currentKey) {
+               mdMeta.push({ label: currentKey, value: currentValue.trim() });
+             }
+             currentKey = part.substring(0, colonIdx).trim();
+             currentValue = part.substring(colonIdx + 1).trim();
+          } else {
+             if (currentKey) {
+               currentValue += currentValue ? ' | ' + part : part;
+             } else if (part && part.length < 50) {
+               mdMeta.push({ label: part });
+             }
+          }
+        }
+        if (currentKey) {
+           mdMeta.push({ label: currentKey, value: currentValue.trim() });
+        }
+      });
+    }
+    return ''; 
+  });
+
+  // Strip @content annotation lines
+  stripped = stripped.replace(/^@\S+[^\n]*\n?/gm, (match) => {
+    const cleaned = match.replace(/^@\S+\s*\|\s*/, '');
+    const parts = cleaned.split('|');
+    let currentKey = null;
+    let currentValue = '';
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i].trim();
+      const colonIdx = part.indexOf(':');
+      if (colonIdx > 0 && colonIdx < 30) {
+        if (currentKey) mdMeta.push({ label: currentKey, value: currentValue.trim() });
+        currentKey = part.substring(0, colonIdx).trim();
+        currentValue = part.substring(colonIdx + 1).trim();
+      } else {
+        if (currentKey) {
+           currentValue += currentValue ? ' | ' + part : part;
+        } else if (part && part.length < 50) {
+           mdMeta.push({ label: part });
+        }
+      }
+    }
+    if (currentKey) mdMeta.push({ label: currentKey, value: currentValue.trim() });
+
+    return '';
+  });
 
   // Strip leading blank lines
   stripped = stripped.replace(/^\s+/, '');
 
-  return stripped;
+  return { processedContent: stripped, mdMeta };
 }
 
 // SVG link icon as hast node (invisible by default, shown on hover via CSS)
@@ -59,10 +126,20 @@ const anchorIcon = {
 };
 
 export function MarkdownRenderer({ content }) {
-  const processedContent = useMemo(() => stripFrontmatter(content), [content]);
+  const { processedContent, mdMeta } = useMemo(() => extractMetadata(content), [content]);
 
   return (
     <div className="md-content">
+      {mdMeta.length > 0 && (
+        <div className="md-meta-badges">
+          {mdMeta.map((meta, i) => (
+            <div key={i} className={`md-meta-badge ${meta.isPrimary ? 'sme-mandate' : ''}`}>
+              <span className="md-meta-label">{meta.label}</span>
+              {meta.value && <span className="md-meta-value">{meta.value}</span>}
+            </div>
+          ))}
+        </div>
+      )}
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[
