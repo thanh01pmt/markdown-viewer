@@ -1,20 +1,20 @@
 {
-  "name": "markdown-viewer-monorepo",
-  "private": true,
-  "engines": {
-    "node": ">=22.12.0",
-    "pnpm": ">=9.0.0"
-  },
-  "packageManager": "pnpm@9.1.4",
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "fix:cfm": "node scripts/fix-frontmatter.mjs",
-    "format": "prettier --write \"**/*.{ts,tsx,md,astro}\""
-  },
-  "devDependencies": {
-    "turbo": "latest",
-    "prettier": "latest"
-  }
+	"name": "markdown-viewer-monorepo",
+	"private": true,
+	"engines": {
+		"node": ">=22.12.0",
+		"pnpm": ">=9.0.0"
+	},
+	"packageManager": "pnpm@9.1.4",
+	"scripts": {
+		"dev": "turbo run dev && netlify dev",
+		"build": "turbo run build",
+		"lint": "turbo run lint",
+		"fix:cfm": "node scripts/fix-frontmatter.mjs",
+		"format": "prettier --write \"**/*.{ts,tsx,md,astro}\""
+	},
+	"devDependencies": {
+		"turbo": "latest",
+		"prettier": "latest"
+	}
 }
