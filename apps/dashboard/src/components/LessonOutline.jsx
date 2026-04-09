@@ -1,15 +1,5 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
-
-/**
- * Build slug from heading text (must match rehype-slug logic)
- */
-function toSlug(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s\u00C0-\u024F\u1E00-\u1EFF-]/g, '')
-    .trim()
-    .replace(/[-\s]+/g, '-');
-}
+import GithubSlugger from 'github-slugger';
 
 export function LessonOutline({ content, scrollContainerRef, isDialog, onClose }) {
   const [activeId, setActiveId] = useState(null);
@@ -18,13 +8,14 @@ export function LessonOutline({ content, scrollContainerRef, isDialog, onClose }
 
   const headings = useMemo(() => {
     if (!content) return [];
+    const slugger = new GithubSlugger();
     // Strip frontmatter before parsing headings
     const stripped = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '');
     const matches = Array.from(stripped.matchAll(/^(#{1,3})\s+(.+)$/gm));
     return matches.map(m => {
       const level = m[1].length;
       const text = m[2].trim();
-      const id = toSlug(text);
+      const id = slugger.slug(text);
       return { level, text, id };
     });
   }, [content]);
