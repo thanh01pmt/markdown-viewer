@@ -7,14 +7,16 @@
 	},
 	"packageManager": "pnpm@9.1.4",
 	"scripts": {
-		"dev": "turbo run dev && netlify dev",
+		"dev": "concurrently \"cd apps/dashboard && pnpm dev\" \"cd apps/dashboard && netlify functions:serve -f functions --port 9999 --offline\"",
+		"dev:vite": "turbo run dev",
 		"build": "turbo run build",
 		"lint": "turbo run lint",
 		"fix:cfm": "node scripts/fix-frontmatter.mjs",
 		"format": "prettier --write \"**/*.{ts,tsx,md,astro}\""
 	},
 	"devDependencies": {
-		"turbo": "latest",
-		"prettier": "latest"
+		"concurrently": "^9.2.1",
+		"prettier": "latest",
+		"turbo": "latest"
 	}
 }

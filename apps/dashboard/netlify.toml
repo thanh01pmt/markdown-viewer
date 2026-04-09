@@ -1,0 +1,14 @@
+[build]
+  publish = "dist"
+  command = "pnpm build"
+  functions = "functions"
+
+[dev]
+  framework = "#custom"
+  command = "pnpm dev"
+  targetPort = 3001
+  autoLaunch = false
+
+[functions]
+  directory = "functions"
+  node_bundler = "esbuild"

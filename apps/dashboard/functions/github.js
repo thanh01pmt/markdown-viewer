@@ -1,3 +1,4 @@
+/* global process */
 const OWNER = 'thanh01pmt';
 const REPO = 'my-agents';
 const BRANCH = 'main';
@@ -35,7 +36,13 @@ export const handler = async (event) => {
       const fetchContent = async (p) => {
         const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${p}?ref=${BRANCH}`;
         const res = await fetch(url, { headers });
-        if (!res.ok) return null;
+        if (!res.ok) {
+          if (res.status === 403 || res.status === 429) {
+            throw new Error(`Rate Limit Exceeded for ${p}`);
+          }
+          console.warn(`Failed to fetch ${p}: ${res.statusText}`);
+          return null; // For 404 or others, return null
+        }
         return res.json();
       };
 

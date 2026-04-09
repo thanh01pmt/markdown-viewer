@@ -50,7 +50,13 @@ async function githubFetch(path, token) {
 export async function fetchAggrData(projectName) {
   const url = `${FUNC_URL}?action=aggregate&project=${encodeURIComponent(projectName)}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Fallback: Không thể tải dữ liệu tổng hợp cho ${projectName}`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    if (err.message || err.error) {
+      throw new Error(err.message || err.error);
+    }
+    throw new Error(`Fallback: Không thể tải dữ liệu tổng hợp cho ${projectName}`);
+  }
   return res.json();
 }
 
