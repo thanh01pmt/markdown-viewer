@@ -305,6 +305,8 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.1); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg)} }
 .md-content { max-width:780px; }
+.md-content.is-marp { max-width: none; }
+.preview-box-body:has(.is-marp) { padding: 0; }
 .md-content h1 { font-size:20px; font-weight:600; color:var(--text); margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
 .md-content h2 { font-size:16px; font-weight:500; color:var(--text); margin:22px 0 10px; }
 .md-content h3 { font-size:14px; font-weight:500; color:var(--text2); margin:16px 0 8px; }

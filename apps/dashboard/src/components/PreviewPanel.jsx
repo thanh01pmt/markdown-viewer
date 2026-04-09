@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { MarkdownRenderer } from './MarkdownRenderer';
+import { extractMetadata } from '../utils/markdown';
 import { REPO, PROJECTS_ROOT } from '../config';
 
 export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
   const { activeLesson, lessonContent, lessonLoading, clearLesson } = useStore();
   const [viewMode, setViewMode] = useState('preview'); // 'preview' | 'raw'
+  const [renderMode, setRenderMode] = useState('slide'); // 'slide' | 'doc'
   const [copying, setCopying] = useState(false);
+
+  const { isMarp } = useMemo(() => extractMetadata(lessonContent), [lessonContent]);
 
   if (!activeLesson) {
     return (
@@ -75,19 +79,47 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
           </div>
           
           <div className="preview-box-header-center">
-            <div className="segmented-control">
-              <button 
-                className={`segmented-btn ${viewMode === 'preview' ? 'active' : ''}`}
-                onClick={() => setViewMode('preview')}
-              >
-                Preview
-              </button>
-              <button 
-                className={`segmented-btn ${viewMode === 'raw' ? 'active' : ''}`}
-                onClick={() => setViewMode('raw')}
-              >
-                Code
-              </button>
+            <div className="flex items-center gap-3">
+              <div className="segmented-control">
+                <button 
+                  className={`segmented-btn ${viewMode === 'preview' ? 'active' : ''}`}
+                  onClick={() => setViewMode('preview')}
+                >
+                  Preview
+                </button>
+                <button 
+                  className={`segmented-btn ${viewMode === 'raw' ? 'active' : ''}`}
+                  onClick={() => setViewMode('raw')}
+                >
+                  Code
+                </button>
+              </div>
+
+              {isMarp && viewMode === 'preview' && (
+                <div className="segmented-control">
+                  <button 
+                    className={`segmented-btn flex items-center gap-1.5 ${renderMode === 'slide' ? 'active' : ''}`}
+                    onClick={() => setRenderMode('slide')}
+                    title="Presentation Mode"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 3h20v14H2zM8 21h8M12 17v4"/>
+                    </svg>
+                    <span>Presentation</span>
+                  </button>
+                  <button 
+                    className={`segmented-btn flex items-center gap-1.5 ${renderMode === 'doc' ? 'active' : ''}`}
+                    onClick={() => setRenderMode('doc')}
+                    title="Document Mode"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <path d="M14 2v6h6"/>
+                    </svg>
+                    <span>Document</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -144,8 +176,8 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
           ) : viewMode === 'raw' ? (
             <pre className="raw-view">{lessonContent}</pre>
           ) : (
-            <div className="md-content">
-              <MarkdownRenderer content={lessonContent} />
+            <div className={`md-content ${isMarp ? 'is-marp' : ''}`}>
+              <MarkdownRenderer content={lessonContent} forcedMode={renderMode} />
             </div>
           )}
         </div>
