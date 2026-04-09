@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 
 export function ProjectSelector() {
   const { activeProject, projects, setProjectByPath } = useStore();
+  const currentProject = projects.find(p => p.path === activeProject) || { name: activeProject, path: activeProject };
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const dropdownRef = useRef(null);
@@ -18,15 +19,15 @@ export function ProjectSelector() {
   }, []);
 
   const filtered = projects.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase()) || 
-    p.path.toLowerCase().includes(search.toLowerCase())
+    p?.name?.toLowerCase().includes(search.toLowerCase()) || 
+    p?.path?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="project-selector" ref={dropdownRef}>
       <button className="proj-sel-btn" onClick={() => setIsOpen(!isOpen)}>
         <span className="proj-sel-icon">⬢</span>
-        <span className="proj-sel-name">{activeProject?.name || 'Chọn dự án...'}</span>
+        <span className="proj-sel-name">{currentProject?.name || 'Chọn dự án...'}</span>
         <span className="proj-sel-caret">▼</span>
       </button>
 
@@ -46,7 +47,7 @@ export function ProjectSelector() {
               filtered.map(p => (
                 <div 
                   key={p.path} 
-                  className={`proj-sel-item ${activeProject?.path === p.path ? 'proj-sel-item--active' : ''}`}
+                  className={`proj-sel-item ${activeProject === p.path ? 'proj-sel-item--active' : ''}`}
                   onClick={() => {
                     setProjectByPath(p.path);
                     setIsOpen(false);

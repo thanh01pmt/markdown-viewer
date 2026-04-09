@@ -1,6 +1,8 @@
 import { Suspense, lazy } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 // Lazy-load the heavy syntax highlighter
 const SyntaxHighlighter = lazy(() =>
@@ -31,8 +33,16 @@ export function MarkdownRenderer({ content }) {
     <div className="md-content">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[
+          rehypeSlug,
+          [rehypeAutolinkHeadings, { 
+            behavior: 'prepend',
+            properties: { className: ['anchor-link'] },
+            content: { type: 'text', value: '#' }
+          }]
+        ]}
         components={{
-          code({ node, inline, className, children, ...props }) {
+          code({ inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
             const code = String(children).replace(/\n$/, '');
             if (!inline && match) {

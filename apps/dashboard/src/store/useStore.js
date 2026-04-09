@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import {
   fetchProjects, fetchProjectStatus, fetchAlignmentMatrix,
   fetchLessons, fetchLessonContent, fetchSlides, fetchChangelog, clearCache,
+  fetchAggrData
 } from '../api/github';
 import { parseProjectStatus, parseAlignmentMatrix } from '../utils/parsers';
 import { getProjectFiles } from '../config';
@@ -21,6 +22,7 @@ export const useStore = create(
         set({ activeProject: name, status: null, matrix: [], lessons: [], slides: [], activeLesson: null });
         get().fetchAll();
       },
+      setProjectByPath: (path) => get().setActiveProject(path),
 
       // Data
       status: null,
@@ -45,17 +47,44 @@ export const useStore = create(
       fetchAll: async () => {
         const { token, activeProject } = get();
         set({ loading: true, error: null });
-        const files = getProjectFiles(activeProject);
         
         try {
-          const [statusMd, matrixMd, lessonFiles, slideFiles, changelogMd, projs] = await Promise.all([
-            fetchProjectStatus(files.projectStatus, token),
-            fetchAlignmentMatrix(files.alignmentMatrix, token).catch(() => ''),
-            fetchLessons(files.lessonsDir, token).catch(() => []),
-            fetchSlides(files.slidesDir, token).catch(() => []),
-            fetchChangelog(files.changelog, token).catch(() => ''),
-            fetchProjects(token).catch(() => []),
-          ]);
+          let statusMd = '', matrixMd = '', lessonFiles = [], slideFiles = [], changelogMd = '', projs = [];
+
+          if (!token) {
+            // Use optimized aggregated fetch via Netlify Function
+            const [aggr, projectList] = await Promise.all([
+              fetchAggrData(activeProject),
+              fetchProjects().catch(() => []),
+            ]);
+
+            const decode = (obj) => {
+              if (!obj || !obj.content) return '';
+              const binaryString = atob(obj.content.replace(/\n/g, ''));
+              const bytes = new Uint8Array(binaryString.length);
+              for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+              return new TextDecoder().decode(bytes);
+            };
+
+            statusMd = decode(aggr.status);
+            matrixMd = decode(aggr.matrix);
+            changelogMd = decode(aggr.changelog);
+            lessonFiles = aggr.lessons.filter(f => f.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name));
+            slideFiles = aggr.slides.filter(f => f.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name));
+            projs = projectList;
+          } else {
+            // Legacy/Override: Fallback to individual calls (parallelized)
+            const files = getProjectFiles(activeProject);
+            const [s, m, l, sl, c, p] = await Promise.all([
+              fetchProjectStatus(files.projectStatus, token),
+              fetchAlignmentMatrix(files.alignmentMatrix, token).catch(() => ''),
+              fetchLessons(files.lessonsDir, token).catch(() => []),
+              fetchSlides(files.slidesDir, token).catch(() => []),
+              fetchChangelog(files.changelog, token).catch(() => ''),
+              fetchProjects(token).catch(() => []),
+            ]);
+            statusMd = s; matrixMd = m; lessonFiles = l; slideFiles = sl; changelogMd = c; projs = p;
+          }
           
           set({
             status: parseProjectStatus(statusMd),
@@ -71,6 +100,7 @@ export const useStore = create(
           set({ loading: false, error: err.message });
         }
       },
+
 
       selectLesson: async (lesson, type = 'lesson') => {
         const { token } = get();

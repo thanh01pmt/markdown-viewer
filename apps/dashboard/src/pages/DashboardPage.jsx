@@ -7,6 +7,8 @@ import { LessonSidebar } from '../components/LessonSidebar';
 import { PreviewPanel } from '../components/PreviewPanel';
 import { AlignmentMatrix } from '../components/AlignmentMatrix';
 import { ProjectSelector } from '../components/ProjectSelector';
+import { LessonOutline } from '../components/LessonOutline';
+import { useRef } from 'react';
 
 const TABS = ['Dashboard', 'Lessons', 'Slides', 'Matrix'];
 
@@ -14,10 +16,12 @@ export function DashboardPage() {
   const { 
     activeProject, status, matrix, lessons, slides,
     loading, error, lastFetched, refresh, fetchAll,
-    lessonType 
+    lessonType, lessonContent
   } = useStore();
   
   const [tab, setTab] = useState('Dashboard');
+  const [showOutline, setShowOutline] = useState(true);
+  const previewBodyRef = useRef(null);
 
   useEffect(() => { if (!lastFetched) fetchAll(); }, [lastFetched, fetchAll]);
 
@@ -49,9 +53,9 @@ export function DashboardPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <ProjectSelector />
             <div>
-              <h1 className="dash-title">{activeProject?.name || 'Curriculum OS'}</h1>
+              <h1 className="dash-title">Curriculum OS</h1>
               <div className="dash-sub">
-                <span className="dash-path">{activeProject?.path}</span>
+                <span className="dash-path">{activeProject}</span>
                 {lastFetched && (
                   <span className="dash-updated">
                     &nbsp;· ⟳ {new Date(lastFetched).toLocaleTimeString('vi-VN')}
@@ -172,9 +176,25 @@ export function DashboardPage() {
             <span>{tab} Viewer</span>
             <span className="panel-count">{tab === 'Lessons' ? lessons.length : slides.length} files</span>
           </div>
-          <div className="lesson-layout">
-            <LessonSidebar forceType={tab === 'Lessons' ? 'lesson' : 'slide'} />
-            <PreviewPanel />
+          <div className={`lesson-layout ${showOutline ? 'lesson-layout--with-outline' : ''}`}>
+            <div className="lesson-sidebar-wrapper">
+              <LessonSidebar forceType={tab === 'Lessons' ? 'lesson' : 'slide'} />
+            </div>
+            <div className="preview-panel-wrapper">
+              <PreviewPanel 
+                showOutline={showOutline} 
+                onToggleOutline={() => setShowOutline(!showOutline)}
+                bodyRef={previewBodyRef}
+              />
+            </div>
+            <div className="lesson-outline-wrapper">
+              {showOutline && (
+                <LessonOutline 
+                  content={lessonContent} 
+                  scrollContainerRef={previewBodyRef} 
+                />
+              )}
+            </div>
           </div>
         </section>
       )}

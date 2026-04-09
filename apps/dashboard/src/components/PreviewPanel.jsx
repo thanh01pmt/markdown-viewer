@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { REPO } from '../config';
 
-export function PreviewPanel() {
+export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
   const { activeLesson, lessonContent, lessonLoading, clearLesson } = useStore();
   const [viewMode, setViewMode] = useState('preview'); // 'preview' | 'raw'
 
@@ -18,8 +18,10 @@ export function PreviewPanel() {
   }
 
   const githubUrl = `https://github.com/${REPO.owner}/${REPO.repo}/blob/${REPO.branch}/${activeLesson.path}`;
-  const wordCount = lessonContent.split(/\s+/).filter(Boolean).length;
+  const wordCount = lessonContent ? lessonContent.split(/\s+/).filter(Boolean).length : 0;
   const readTime = Math.max(1, Math.round(wordCount / 200));
+  // Derive status from filename pattern
+  const status = activeLesson.name?.includes('.draft') ? 'pending' : 'done';
 
   return (
     <div className="preview-panel">
@@ -41,6 +43,13 @@ export function PreviewPanel() {
             className={`tab-btn ${viewMode === 'raw' ? 'tab-btn--active' : ''}`}
             onClick={() => setViewMode('raw')}
           >Raw MD</button>
+          <button 
+            className={`tab-btn ${showOutline ? 'tab-btn--active' : ''}`} 
+            onClick={onToggleOutline}
+            title="Toggle Outline"
+          >
+            {showOutline ? '▥ Outline On' : '▯ Outline Off'}
+          </button>
           <a href={githubUrl} target="_blank" rel="noreferrer" className="tab-btn">
             GitHub ↗
           </a>
@@ -61,7 +70,7 @@ export function PreviewPanel() {
       </div>
 
       {/* Body */}
-      <div className="preview-body">
+      <div className="preview-body" ref={bodyRef}>
         {lessonLoading ? (
           <div className="preview-loading">
             <div className="spinner" />

@@ -73,7 +73,6 @@ export function LessonSidebar({ forceType }) {
               onClick={() => selectLesson(l, currentType)}
             >
               <div className="sidebar-item-name">{formatName(l.name)}</div>
-              <div className="sidebar-item-path">{l.name}</div>
             </button>
           ))
         ) : (
