@@ -14,6 +14,8 @@ export const useStore = create(
       // Auth
       token: '',
       setToken: (token) => { clearCache(); set({ token }); },
+      isTokenGateOpen: false,
+      setTokenGateOpen: (open) => set({ isTokenGateOpen: open }),
 
       // Multi-Project
       projects: [],

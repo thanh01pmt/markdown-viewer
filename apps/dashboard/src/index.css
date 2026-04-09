@@ -8,13 +8,23 @@
 }
 body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.6; min-height:100vh; }
 #root { min-height:100vh; }
-.dashboard { max-width:1400px; margin:0 auto; padding:24px 24px 48px; display:flex; flex-direction:column; gap:20px; }
-.page-center { display:flex; align-items:center; justify-content:center; min-height:100vh; }
-.dash-header { display:flex; align-items:flex-start; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:12px; }
-.dash-title { font-size:20px; font-weight:600; letter-spacing:-0.02em; }
-.dash-sub { font-size:12px; color:var(--text2); margin-top:2px; }
+/* App Sidebar Layout */
+.app-layout { display:flex; height:100vh; overflow:hidden; background:var(--bg); }
+.app-sidebar { width:260px; flex-shrink:0; display:flex; flex-direction:column; border-right:1px solid var(--border); background:var(--bg2); }
+.app-sidebar-header { padding:20px 24px 16px; display:flex; flex-direction:column; gap:12px; border-bottom:1px solid var(--border); }
+.app-sidebar-nav { flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px; }
+.sidebar-tab-btn { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border:none; background:transparent; color:var(--text2); border-radius:var(--radius-sm); cursor:pointer; font-size:14px; font-weight:500; transition:all 0.15s ease; }
+.sidebar-tab-btn:hover { background:var(--bg3); color:var(--text); }
+.sidebar-tab-btn.active { background:rgba(59,130,246,0.1); color:var(--blue); }
+.sidebar-tab-count { font-size:10px; padding:2px 8px; background:var(--bg3); border-radius:10px; color:var(--text3); }
+.app-sidebar-footer { padding:16px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+.app-main { flex:1; min-width:0; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:20px; }
+
+.page-center { display:flex; align-items:center; justify-content:center; height:100%; width:100%; }
+.dash-title { font-size:20px; font-weight:600; letter-spacing:-0.02em; line-height: 1.2; }
+.dash-sub { font-size:12px; color:var(--text2); margin-top:4px; }
 .dash-updated { color:var(--text3); }
-.dash-header-right { display:flex; align-items:center; gap:10px; }
+.error-badge { font-size:12px; color:var(--red); text-align:center; padding:4px; }
 .error-badge { font-size:12px; color:var(--red); }
 .loading-bar { height:2px; background:var(--border); border-radius:2px; overflow:hidden; }
 .loading-bar-fill { height:100%; width:60%; background:var(--blue); animation:loadpulse 1.2s ease-in-out infinite alternate; }
@@ -54,10 +64,17 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .roadmap-name { flex:1; font-size:12px; color:var(--text2); }
 .roadmap-track { flex:0 0 60px; height:4px; border-radius:2px; background:var(--border); overflow:hidden; }
 .roadmap-fill { height:100%; background:var(--green); border-radius:2px; transition:width 1s ease; }
+.lesson-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 .lesson-panel .lesson-layout { 
   display: grid; 
   grid-template-columns: 240px 1fr 0px; 
-  height: calc(100vh - 280px); 
+  flex: 1;
+  min-height: 0;
   transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   position: relative;
@@ -83,6 +100,12 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
   min-width: 0;
   display: flex;
   flex-direction: column;
+}
+.preview-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 .lesson-sidebar { display:flex; flex-direction:column; height: 100%; border-right: 1px solid var(--border); }
 .sidebar-hdr { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--border); font-size:10px; color:var(--text3); font-family:monospace; }
@@ -140,9 +163,8 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 
 /* ── Box Layout (GitHub Style) ───────────────────────────────── */
 .preview-box {
-  margin: 0 24px 24px 24px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  margin: 0;
+  border-top: none;
   background: var(--bg);
   display: flex;
   flex-direction: column;
@@ -353,8 +375,7 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .token-input { padding:9px 12px; background:var(--bg3); border:1px solid var(--border2); border-radius:var(--radius-sm); color:var(--text); font-size:13px; font-family:monospace; outline:none; width:100%; }
 .token-input:focus { border-color:var(--blue); }
 .token-error { font-size:12px; color:var(--red); margin-top:10px; }
-.fab-settings { position:fixed; bottom:24px; right:24px; width:40px; height:40px; background:var(--bg2); border:1px solid var(--border2); border-radius:50%; color:var(--text2); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; z-index:100; }
-.fab-settings:hover { background:var(--bg3); color:var(--text); }
+/* fab-settings removed for sidebar */
 .empty { padding:24px; text-align:center; color:var(--text3); font-size:13px; }
 ::-webkit-scrollbar { width:5px; height:5px; }
 ::-webkit-scrollbar-track { background:transparent; }
@@ -370,11 +391,7 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 }
 
 /* ── Tabs nav ────────────────────────────────────────────────── */
-.tab-row { display:flex; gap:4px; border-bottom:1px solid var(--border); padding-bottom:0; }
-.nav-tab { padding:8px 16px; background:transparent; border:none; border-bottom:2px solid transparent; color:var(--text2); font-size:13px; cursor:pointer; transition:color .15s; display:flex; align-items:center; gap:6px; margin-bottom:-1px; }
-.nav-tab:hover { color:var(--text); }
-.nav-tab--active { color:var(--text); border-bottom-color:var(--blue); }
-.nav-tab-count { font-size:10px; padding:1px 6px; background:var(--bg3); border-radius:10px; color:var(--text3); }
+/* tab-row removed */
 
 /* ── Repo chip ───────────────────────────────────────────────── */
 .repo-chip { font-size:11px; background:rgba(59,130,246,0.1); color:#93c5fd; padding:2px 8px; border-radius:4px; font-family:monospace; }

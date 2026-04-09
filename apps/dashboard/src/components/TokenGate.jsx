@@ -1,24 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 
 export function TokenGate({ children }) {
-  const { token, setToken, fetchAll, error, loading, lastFetched } = useStore();
+  const { token, setToken, fetchAll, error, loading, lastFetched, isTokenGateOpen, setTokenGateOpen } = useStore();
   const [input, setInput] = useState('');
-  const [open, setOpen] = useState(!lastFetched);
+
+  useEffect(() => {
+    if (!lastFetched && !token) {
+      setTokenGateOpen(true);
+    }
+  }, [lastFetched, token, setTokenGateOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (input.trim()) setToken(input.trim());
     await fetchAll();
-    setOpen(false);
+    setTokenGateOpen(false);
   };
 
   const handlePublic = async () => {
     await fetchAll();
-    setOpen(false);
+    setTokenGateOpen(false);
   };
 
-  if (open) {
+  if (isTokenGateOpen) {
     return (
       <div className="token-gate">
         <div className="token-card">
@@ -73,13 +78,6 @@ export function TokenGate({ children }) {
   return (
     <>
       {children}
-      <button
-        className="fab-settings"
-        onClick={() => setOpen(true)}
-        title="Cài đặt kết nối GitHub"
-      >
-        ⚙
-      </button>
     </>
   );
 }

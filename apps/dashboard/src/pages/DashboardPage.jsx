@@ -15,7 +15,7 @@ export function DashboardPage() {
   const { 
     activeProject, status, matrix, lessons, slides,
     loading, error, lastFetched, refresh, fetchAll,
-    lessonType, lessonContent
+    lessonType, lessonContent, setTokenGateOpen
   } = useStore();
   
   const [tab, setTab] = useState('Dashboard');
@@ -46,60 +46,63 @@ export function DashboardPage() {
   };
 
   return (
-    <div className="dashboard">
-      {/* ── Header ── */}
-      <header className="dash-header">
-        <div className="dash-header-left">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <ProjectSelector />
-            <div>
-              <h1 className="dash-title">Curriculum OS</h1>
-              <div className="dash-sub">
-                <span className="dash-path">{activeProject}</span>
-                {lastFetched && (
-                  <span className="dash-updated">
-                    &nbsp;· ⟳ {new Date(lastFetched).toLocaleTimeString('vi-VN')}
-                  </span>
-                )}
-              </div>
+    <div className="app-layout">
+      {/* ── Sidebar ── */}
+      <aside className="app-sidebar">
+        <div className="app-sidebar-header">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <h1 className="dash-title">Curriculum OS</h1>
+            <div className="dash-sub">
+              <div>{activeProject}</div>
+              {lastFetched && (
+                <div className="dash-updated">
+                  ⟳ {new Date(lastFetched).toLocaleTimeString('vi-VN')}
+                </div>
+              )}
             </div>
           </div>
+          <ProjectSelector />
         </div>
-        <div className="dash-header-right">
-          {error && <span className="error-badge">⚠ {error}</span>}
-          <button className="btn-refresh" onClick={refresh} disabled={loading}>
-            {loading ? '⟳ Đang tải...' : '⟳ Refresh'}
-          </button>
-        </div>
-      </header>
 
-      {loading && <div className="loading-bar"><div className="loading-bar-fill" /></div>}
-
-      {/* ── Tabs ── */}
-      {lastFetched && (
-        <div className="tab-row">
-          {TABS.map(t => (
+        <nav className="app-sidebar-nav">
+          {lastFetched && TABS.map(t => (
             <button
               key={t}
-              className={`nav-tab ${tab === t ? 'nav-tab--active' : ''}`}
+              className={`sidebar-tab-btn ${tab === t ? 'active' : ''}`}
               onClick={() => handleTabChange(t)}
             >
-              {t}
+              <span>{t}</span>
               {t === 'Matrix' && matrix.length > 0 && (
-                <span className="nav-tab-count">{matrix.length}</span>
+                <span className="sidebar-tab-count">{matrix.length}</span>
               )}
               {t === 'Lessons' && lessons.length > 0 && (
-                <span className="nav-tab-count">{lessons.length}</span>
+                <span className="sidebar-tab-count">{lessons.length}</span>
               )}
               {t === 'Slides' && slides.length > 0 && (
-                <span className="nav-tab-count">{slides.length}</span>
+                <span className="sidebar-tab-count">{slides.length}</span>
               )}
             </button>
           ))}
-        </div>
-      )}
+        </nav>
 
-      {/* ── Dashboard tab ── */}
+        <div className="app-sidebar-footer">
+          {error && <div className="error-badge">⚠ {error}</div>}
+          <button className="btn-refresh" onClick={refresh} disabled={loading} style={{ width: '100%' }}>
+            {loading ? '⟳ Đang tải...' : '⟳ Refresh'}
+          </button>
+          <button 
+            className="btn-secondary" 
+            onClick={() => setTokenGateOpen(true)} 
+            style={{ width: '100%', padding: '8px', fontSize: '13px' }}
+          >
+            ⚙ Settings / Token
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main Content ── */}
+      <main className="app-main">
+        {loading && <div className="loading-bar"><div className="loading-bar-fill" /></div>}
       {tab === 'Dashboard' && status && (
         <>
           <section className="metrics-row">
@@ -238,6 +241,7 @@ export function DashboardPage() {
           </div>
         </div>
       )}
+      </main>
     </div>
   );
 }
