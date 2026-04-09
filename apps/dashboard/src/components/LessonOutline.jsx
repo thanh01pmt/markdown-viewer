@@ -1,41 +1,58 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 
-export function LessonOutline({ content, scrollContainerRef }) {
+/**
+ * Build slug from heading text (must match rehype-slug logic)
+ */
+function toSlug(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s\u00C0-\u024F\u1E00-\u1EFF-]/g, '')
+    .trim()
+    .replace(/[-\s]+/g, '-');
+}
+
+export function LessonOutline({ content, scrollContainerRef, isDialog, onClose }) {
   const [activeId, setActiveId] = useState(null);
+  const [filterText, setFilterText] = useState('');
   const observerRef = useRef(null);
 
   const headings = useMemo(() => {
     if (!content) return [];
-    const matches = Array.from(content.matchAll(/^(#{1,3})\s+(.+)$/gm));
+    // Strip frontmatter before parsing headings
+    const stripped = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '');
+    const matches = Array.from(stripped.matchAll(/^(#{1,3})\s+(.+)$/gm));
     return matches.map(m => {
       const level = m[1].length;
       const text = m[2].trim();
-      const id = text
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '') // remove special chars
-        .trim()
-        .replace(/[-\s]+/g, '-'); // replace spaces/hyphens with single hyphen
-
+      const id = toSlug(text);
       return { level, text, id };
     });
   }, [content]);
 
+  const filtered = useMemo(() => {
+    if (!filterText) return headings;
+    return headings.filter(h =>
+      h.text.toLowerCase().includes(filterText.toLowerCase())
+    );
+  }, [headings, filterText]);
+
   useEffect(() => {
     if (headings.length === 0) return;
-
     if (observerRef.current) observerRef.current.disconnect();
 
     const handleIntersect = (entries) => {
-      const visibleEntry = entries.find(entry => entry.isIntersecting);
-      if (visibleEntry) {
-        setActiveId(visibleEntry.target.id);
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          setActiveId(entry.target.id);
+          break;
+        }
       }
     };
 
     observerRef.current = new IntersectionObserver(handleIntersect, {
       root: scrollContainerRef?.current || null,
-      rootMargin: '-10% 0px -80% 0px',
-      threshold: 0
+      rootMargin: '-10% 0px -75% 0px',
+      threshold: 0,
     });
 
     headings.forEach(h => {
@@ -46,26 +63,76 @@ export function LessonOutline({ content, scrollContainerRef }) {
     return () => observerRef.current?.disconnect();
   }, [headings, scrollContainerRef]);
 
+  const handleItemClick = (e, id) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      const container = scrollContainerRef?.current;
+      if (container) {
+        const top = el.offsetTop - 24;
+        container.scrollTo({ top, behavior: 'smooth' });
+      } else {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setActiveId(id);
+      if (isDialog && onClose) onClose();
+    }
+  };
+
   if (headings.length === 0) return null;
 
-  return (
-    <div className="lesson-outline">
-      <div className="outline-hdr">Outline</div>
+  const inner = (
+    <div className="outline-inner">
+      <div className="outline-hdr">
+        <span>Outline</span>
+        {isDialog && (
+          <button className="outline-close-btn" onClick={onClose} title="Đóng">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </button>
+        )}
+      </div>
+      <div className="outline-filter">
+        <input
+          type="text"
+          placeholder="Filter headings"
+          value={filterText}
+          onChange={e => setFilterText(e.target.value)}
+          className="outline-filter-input"
+        />
+      </div>
       <div className="outline-list">
-        {headings.map((h, i) => (
+        {filtered.map((h, i) => (
           <a
             key={`${h.id}-${i}`}
             href={`#${h.id}`}
             className={`outline-item outline-item--h${h.level} ${activeId === h.id ? 'outline-item--active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onClick={(e) => handleItemClick(e, h.id)}
           >
             {h.text}
           </a>
         ))}
+        {filtered.length === 0 && (
+          <div className="outline-empty">Không tìm thấy</div>
+        )}
       </div>
+    </div>
+  );
+
+  if (isDialog) {
+    return (
+      <div className="outline-dialog-overlay" onClick={onClose}>
+        <div className="outline-dialog" onClick={e => e.stopPropagation()}>
+          {inner}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="lesson-outline">
+      {inner}
     </div>
   );
 }

@@ -1,8 +1,9 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+
 
 // Lazy-load the heavy syntax highlighter
 const SyntaxHighlighter = lazy(() =>
@@ -28,17 +29,48 @@ function CodeBlock({ language, children }) {
   );
 }
 
+/**
+ * Strip YAML frontmatter (lines between leading --- delimiters)
+ * Also handles @content annotations and other non-markdown metadata lines
+ */
+function stripFrontmatter(content) {
+  if (!content) return '';
+
+  // Strip standard YAML frontmatter: --- ... ---
+  const fmRegex = /^---\s*\n[\s\S]*?\n---\s*\n?/;
+  let stripped = content.replace(fmRegex, '');
+
+  // Strip @content annotation lines (e.g.: "@content | Phiên bản: ...")
+  // These are italic-rendered lines that start with @
+  stripped = stripped.replace(/^@\S+[^\n]*\n?/gm, '');
+
+  // Strip leading blank lines
+  stripped = stripped.replace(/^\s+/, '');
+
+  return stripped;
+}
+
+// SVG link icon as hast node (invisible by default, shown on hover via CSS)
+const anchorIcon = {
+  type: 'element',
+  tagName: 'span',
+  properties: { className: ['anchor-icon'], ariaHidden: 'true' },
+  children: [{ type: 'text', value: '#' }],
+};
+
 export function MarkdownRenderer({ content }) {
+  const processedContent = useMemo(() => stripFrontmatter(content), [content]);
+
   return (
     <div className="md-content">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[
           rehypeSlug,
-          [rehypeAutolinkHeadings, { 
+          [rehypeAutolinkHeadings, {
             behavior: 'prepend',
-            properties: { className: ['anchor-link'] },
-            content: { type: 'text', value: '#' }
+            properties: { className: ['anchor-link'], ariaHidden: 'true', tabIndex: -1 },
+            content: anchorIcon,
           }]
         ]}
         components={{
@@ -61,7 +93,7 @@ export function MarkdownRenderer({ content }) {
           },
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );

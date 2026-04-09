@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { MarkdownRenderer } from './MarkdownRenderer';
-import { REPO } from '../config';
+import { REPO, PROJECTS_ROOT } from '../config';
 
 export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
   const { activeLesson, lessonContent, lessonLoading, clearLesson } = useStore();
@@ -33,16 +33,32 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
 
   return (
     <div className="preview-panel">
-      {/* GitHub-like Breadcrumb Header */}
+      {/* Dynamic Breadcrumb from file path */}
       <div className="preview-page-header">
         <nav className="preview-breadcrumb">
-          <a href="#" className="breadcrumb-link">{REPO.repo}</a>
-          <span className="breadcrumb-sep">/</span>
-          <a href="#" className="breadcrumb-link">_shared</a>
-          <span className="breadcrumb-sep">/</span>
-          <a href="#" className="breadcrumb-link">LESSONS</a>
-          <span className="breadcrumb-sep">/</span>
-          <h1 className="breadcrumb-active">{activeLesson.name}</h1>
+          {/* Build breadcrumb segments from path, starting after PROJECTS_ROOT/<project>/ */}
+          {(() => {
+            // e.g. path = 'packages/.../projects/pathway-aiot/_shared/LESSONS/LESSON_HP7_02.md'
+            // Strip the common prefix to get the project-relative path
+            const segments = activeLesson.path.split('/');
+            // Find the project folder: it's 2 levels deep from PROJECTS_ROOT
+            const projectsRootParts = PROJECTS_ROOT.split('/').length; // e.g. 3 for packages/x/projects
+            // segments after projectRoot/projectName/
+            const relParts = segments.slice(projectsRootParts + 1); // skip projectName too
+            const dirs = relParts.slice(0, -1);
+            const file = relParts[relParts.length - 1];
+            return (
+              <>
+                {dirs.map((seg, i) => (
+                  <span key={i}>
+                    <span className="breadcrumb-link">{seg}</span>
+                    <span className="breadcrumb-sep">&nbsp;/&nbsp;</span>
+                  </span>
+                ))}
+                <h1 className="breadcrumb-active">{file}</h1>
+              </>
+            );
+          })()}
         </nav>
       </div>
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import { MetricCard } from '../components/MetricCard';
 import { PipelineTable } from '../components/PipelineTable';
@@ -8,7 +8,6 @@ import { PreviewPanel } from '../components/PreviewPanel';
 import { AlignmentMatrix } from '../components/AlignmentMatrix';
 import { ProjectSelector } from '../components/ProjectSelector';
 import { LessonOutline } from '../components/LessonOutline';
-import { useRef } from 'react';
 
 const TABS = ['Dashboard', 'Lessons', 'Slides', 'Matrix'];
 
@@ -21,6 +20,7 @@ export function DashboardPage() {
   
   const [tab, setTab] = useState('Dashboard');
   const [showOutline, setShowOutline] = useState(true);
+  const [showOutlineDialog, setShowOutlineDialog] = useState(false);
   const previewBodyRef = useRef(null);
 
   useEffect(() => { if (!lastFetched) fetchAll(); }, [lastFetched, fetchAll]);
@@ -176,17 +176,25 @@ export function DashboardPage() {
             <span>{tab} Viewer</span>
             <span className="panel-count">{tab === 'Lessons' ? lessons.length : slides.length} files</span>
           </div>
-          <div className={`lesson-layout ${showOutline ? 'lesson-layout--with-outline' : ''}`}>
+        <div className={`lesson-layout ${showOutline ? 'lesson-layout--with-outline' : ''}`}>
             <div className="lesson-sidebar-wrapper">
               <LessonSidebar forceType={tab === 'Lessons' ? 'lesson' : 'slide'} />
             </div>
             <div className="preview-panel-wrapper">
               <PreviewPanel 
                 showOutline={showOutline} 
-                onToggleOutline={() => setShowOutline(!showOutline)}
+                onToggleOutline={() => {
+                  // On desktop: toggle sidebar; detected via CSS class
+                  if (window.innerWidth <= 900) {
+                    setShowOutlineDialog(true);
+                  } else {
+                    setShowOutline(!showOutline);
+                  }
+                }}
                 bodyRef={previewBodyRef}
               />
             </div>
+            {/* Right sidebar outline — desktop only */}
             <div className="lesson-outline-wrapper">
               {showOutline && (
                 <LessonOutline 
@@ -195,6 +203,15 @@ export function DashboardPage() {
                 />
               )}
             </div>
+            {/* Dialog outline — mobile only */}
+            {showOutlineDialog && (
+              <LessonOutline 
+                content={lessonContent}
+                scrollContainerRef={previewBodyRef}
+                isDialog
+                onClose={() => setShowOutlineDialog(false)}
+              />
+            )}
           </div>
         </section>
       )}
