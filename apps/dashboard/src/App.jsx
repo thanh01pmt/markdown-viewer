@@ -1,14 +1,10 @@
-import React from 'react';
 import { TokenGate } from './components/TokenGate';
-import DashboardPage from './pages/DashboardPage';
-import './index.css';
+import { DashboardPage } from './pages/DashboardPage';
 
-function App() {
+export default function App() {
   return (
     <TokenGate>
       <DashboardPage />
     </TokenGate>
   );
 }
-
-export default App;

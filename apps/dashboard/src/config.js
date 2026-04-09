@@ -2,16 +2,23 @@ export const REPO = {
   owner: 'thanh01pmt',
   repo: 'my-agents',
   branch: 'main',
-  base: 'packages/the-ultimate-curriculum-agent-os/projects/pathway-aiot',
 };
+
+export const PROJECTS_ROOT = 'packages/the-ultimate-curriculum-agent-os/projects';
 
 export const GITHUB_API = 'https://api.github.com';
-export const RAW_BASE = `https://raw.githubusercontent.com/${REPO.owner}/${REPO.repo}/${REPO.branch}/${REPO.base}`;
 
-export const FILES = {
-  projectStatus: `${REPO.base}/PROJECT_STATUS.md`,
-  alignmentMatrix: `${REPO.base}/ALIGNMENT_MATRIX.md`,
-  changelog: `${REPO.base}/CHANGELOG.md`,
-  resourceManifest: `${REPO.base}/_shared/RESOURCE_MANIFEST.md`,
-  lessonsDir: `${REPO.base}/_shared/LESSONS`,
+// Helper to get file paths for a specific project
+export const getProjectFiles = (projectDirName) => {
+  const base = `${PROJECTS_ROOT}/${projectDirName}`;
+  return {
+    base,
+    projectStatus: `${base}/PROJECT_STATUS.md`,
+    alignmentMatrix: `${base}/ALIGNMENT_MATRIX.md`,
+    changelog: `${base}/CHANGELOG.md`,
+    resourceManifest: `${base}/_shared/RESOURCE_MANIFEST.md`,
+    lessonsDir: `${base}/_shared/LESSONS`,
+    slidesDir: `${base}/_shared/SLIDES`,
+  };
 };
+

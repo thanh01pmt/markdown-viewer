@@ -1,13 +1,14 @@
-import React from 'react';
-
-export function MetricCard({ label, value, pct, color }) {
+export function MetricCard({ label, value, sub, pct, color = '#3266ad' }) {
   return (
-    <div className="metric-card glass" style={{ padding: '1.5rem', borderRadius: '12px', borderLeft: `4px solid ${color}` }}>
-      <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{label}</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-        <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{value}</span>
-        {pct !== undefined && <span style={{ fontSize: '0.9rem', color }}>{Math.round(pct)}%</span>}
-      </div>
+    <div className="metric-card">
+      <div className="metric-label">{label}</div>
+      <div className="metric-value" style={{ color }}>{value}</div>
+      {sub && <div className="metric-sub">{sub}</div>}
+      {pct !== undefined && (
+        <div className="metric-bar">
+          <div className="metric-bar-fill" style={{ width: `${pct}%`, background: color }} />
+        </div>
+      )}
     </div>
   );
 }

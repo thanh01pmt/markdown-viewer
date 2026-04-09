@@ -1,4 +1,4 @@
-import { GITHUB_API, REPO, FILES } from '../config';
+import { GITHUB_API, REPO, PROJECTS_ROOT } from '../config';
 
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const cache = new Map();
@@ -34,47 +34,46 @@ async function githubFetch(path, token) {
 }
 
 export async function fetchFileContent(filePath, token) {
-  const data = await githubFetch(filePath, token);
-  if (!data?.content) return '';
+  if (!filePath) return '';
+  const data = await githubFetch(filePath, token).catch(() => null);
+  if (!data || !data.content) return '';
   // data.content is base64 encoded
-  try {
-    const decoded = b64DecodeUnicode(data.content.replace(/\n/g, ''));
-    return decoded;
-  } catch (err) {
-    console.error('Failed to decode content:', err);
-    return '';
-  }
-}
-
-// UTF-8 safe base64 decoding
-function b64DecodeUnicode(str) {
-  const binaryString = atob(str);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return new TextDecoder('utf-8').decode(bytes);
+  const decoded = atob(data.content.replace(/\n/g, ''));
+  return decoded;
 }
 
 export async function fetchDirContents(dirPath, token) {
-  const data = await githubFetch(dirPath, token);
+  if (!dirPath) return [];
+  const data = await githubFetch(dirPath, token).catch(() => []);
   return Array.isArray(data) ? data : [];
 }
 
-export async function fetchProjectStatus(token) {
-  return fetchFileContent(FILES.projectStatus, token);
+// --- Specific fetchers ---
+
+export async function fetchProjects(token) {
+  const contents = await fetchDirContents(PROJECTS_ROOT, token);
+  return contents.filter(f => f.type === 'dir').map(f => f.name);
 }
 
-export async function fetchAlignmentMatrix(token) {
-  return fetchFileContent(FILES.alignmentMatrix, token);
+export async function fetchProjectStatus(path, token) {
+  return fetchFileContent(path, token);
 }
 
-export async function fetchChangelog(token) {
-  return fetchFileContent(FILES.changelog, token).catch(() => '');
+export async function fetchAlignmentMatrix(path, token) {
+  return fetchFileContent(path, token);
 }
 
-export async function fetchLessons(token) {
-  const files = await fetchDirContents(FILES.lessonsDir, token);
+export async function fetchChangelog(path, token) {
+  return fetchFileContent(path, token).catch(() => '');
+}
+
+export async function fetchLessons(path, token) {
+  const files = await fetchDirContents(path, token);
+  return files.filter(f => f.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function fetchSlides(path, token) {
+  const files = await fetchDirContents(path, token);
   return files.filter(f => f.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name));
 }
 
@@ -85,3 +84,4 @@ export async function fetchLessonContent(lessonPath, token) {
 export function clearCache() {
   cache.clear();
 }
+

@@ -1,7 +1,6 @@
 // ─── parseProjectStatus ───────────────────────────────────────────────
 // Parses PROJECT_STATUS.md into structured data
 export function parseProjectStatus(md) {
-  if (!md) return null;
   const lines = md.split('\n');
 
   // ── Pipeline table ─────────────────────────────────────────
@@ -76,15 +75,14 @@ export function parseProjectStatus(md) {
 }
 
 function normalizeStatus(raw) {
-  if (/✅|done|hoàn thành|complete/i.test(raw)) return 'done';
-  if (/⏳|pending|in.progress|đang làm|wip/i.test(raw)) return 'pending';
-  if (/❌|blocked|bị chặn/i.test(raw)) return 'blocked';
+  if (/✅/.test(raw) || /completed|approved|done|finished/i.test(raw)) return 'done';
+  if (/⏳/.test(raw) || /pending|in.progress|wip/i.test(raw)) return 'pending';
+  if (/❌/.test(raw) || /blocked/i.test(raw)) return 'blocked';
   return 'todo';
 }
 
 // ─── parseAlignmentMatrix ─────────────────────────────────────────────
 export function parseAlignmentMatrix(md) {
-  if (!md) return [];
   const rows = [];
   let inTable = false;
   let headerSeen = false;

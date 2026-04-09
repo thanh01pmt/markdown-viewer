@@ -1,123 +1,206 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from '../store/useStore';
+import { MetricCard } from '../components/MetricCard';
 import { PipelineTable } from '../components/PipelineTable';
 import { RoadmapGrid } from '../components/RoadmapGrid';
-import { MetricCard } from '../components/MetricCard';
 import { LessonSidebar } from '../components/LessonSidebar';
 import { PreviewPanel } from '../components/PreviewPanel';
-import MarkdownRenderer from '../components/MarkdownRenderer';
+import { AlignmentMatrix } from '../components/AlignmentMatrix';
+import { ProjectSelector } from '../components/ProjectSelector';
 
-export default function DashboardPage() {
-  const { status, matrix, changelog, loading, error, fetchAll } = useStore();
-  const [activeTab, setActiveTab] = useState('dashboard');
+const TABS = ['Dashboard', 'Lessons', 'Slides', 'Matrix'];
 
+export function DashboardPage() {
+  const { 
+    activeProject, status, matrix, lessons, slides,
+    loading, error, lastFetched, refresh, fetchAll,
+    lessonType 
+  } = useStore();
+  
+  const [tab, setTab] = useState('Dashboard');
+
+  useEffect(() => { if (!lastFetched) fetchAll(); }, [lastFetched, fetchAll]);
+
+  // Sync tab with store lessonType if user clicks sidebar items
   useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+    if (tab === 'Lessons' && lessonType !== 'lesson') {
+      // stay on lessons tab
+    }
+  }, [lessonType, tab]);
 
-  if (loading && !status) return <div className="loading-screen">Loading dashboard data...</div>;
-  if (error) return <div className="error-screen">Error: {error}</div>;
+  const stats = status?.stats || {};
+  const pct = stats.total ? Math.round((stats.done / stats.total) * 100) : 0;
+  const hpPct = stats.hpTotal ? Math.round((stats.hpDone / stats.hpTotal) * 100) : 0;
+  const pendingItem = status?.pipelineRows.find(r => r.status === 'pending');
+
+  const handleTabChange = (t) => {
+    setTab(t);
+    // Auto-select type based on tab
+    if (t === 'Lessons') {
+      // if no active lesson of this type, keep it as is
+    }
+  };
 
   return (
-    <div className="app-container">
-      <header className="header">
-        <div className="brand">
-          <span className="logo">🛡️</span>
-          <h1>Curriculum Dashboard</h1>
+    <div className="dashboard">
+      {/* ── Header ── */}
+      <header className="dash-header">
+        <div className="dash-header-left">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <ProjectSelector />
+            <div>
+              <h1 className="dash-title">{activeProject?.name || 'Curriculum OS'}</h1>
+              <div className="dash-sub">
+                <span className="dash-path">{activeProject?.path}</span>
+                {lastFetched && (
+                  <span className="dash-updated">
+                    &nbsp;· ⟳ {new Date(lastFetched).toLocaleTimeString('vi-VN')}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="header-actions">
-          <button onClick={fetchAll} className="btn-refresh" title="Refresh Data">🔄 Refresh</button>
+        <div className="dash-header-right">
+          {error && <span className="error-badge">⚠ {error}</span>}
+          <button className="btn-refresh" onClick={refresh} disabled={loading}>
+            {loading ? '⟳ Đang tải...' : '⟳ Refresh'}
+          </button>
         </div>
       </header>
 
-      <nav className="tabs-nav">
-        <div className="tabs">
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-            { id: 'lessons', label: 'Lessons', icon: '📚' },
-            { id: 'matrix', label: 'Matrix', icon: '🎯' },
-            { id: 'changelog', label: 'Changelog', icon: '📝' },
-          ].map(tab => (
-            <button 
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`tab-btn ${activeTab === tab.id ? 'tab-btn--active' : ''}`}
+      {loading && <div className="loading-bar"><div className="loading-bar-fill" /></div>}
+
+      {/* ── Tabs ── */}
+      {lastFetched && (
+        <div className="tab-row">
+          {TABS.map(t => (
+            <button
+              key={t}
+              className={`nav-tab ${tab === t ? 'nav-tab--active' : ''}`}
+              onClick={() => handleTabChange(t)}
             >
-              <span className="tab-icon">{tab.icon}</span>
-              {tab.label}
+              {t}
+              {t === 'Matrix' && matrix.length > 0 && (
+                <span className="nav-tab-count">{matrix.length}</span>
+              )}
+              {t === 'Lessons' && lessons.length > 0 && (
+                <span className="nav-tab-count">{lessons.length}</span>
+              )}
+              {t === 'Slides' && slides.length > 0 && (
+                <span className="nav-tab-count">{slides.length}</span>
+              )}
             </button>
           ))}
         </div>
-      </nav>
+      )}
 
-      <main className="main-content">
-        {activeTab === 'dashboard' && status && (
-          <div className="view-fade-in">
-            <div className="metric-grid">
-              <MetricCard 
-                label="Pipeline Progress" 
-                value={`${status.stats.done}/${status.stats.total}`} 
-                pct={Math.round((status.stats.done / status.stats.total) * 100)}
-                sub="Artifacts Completed"
-              />
-              <MetricCard 
-                label="Roadmap Milestone" 
-                value={`${status.stats.hpDone}/${status.stats.hpTotal}`} 
-                pct={Math.round((status.stats.hpDone / status.stats.hpTotal) * 100)}
-                sub="High-level Goals Reached"
-                color="#10b981"
-              />
-            </div>
+      {/* ── Dashboard tab ── */}
+      {tab === 'Dashboard' && status && (
+        <>
+          <section className="metrics-row">
+            <MetricCard
+              label="Pipeline hoàn thành"
+              value={`${stats.done}/${stats.total}`}
+              sub={stats.pending ? `${stats.pending} artifact đang chờ` : 'Tất cả hoàn thành ✓'}
+              pct={pct}
+              color="#22c55e"
+            />
+            <MetricCard
+              label="Học phần hoàn thành"
+              value={`${stats.hpDone}/${stats.hpTotal}`}
+              sub={`Lộ trình HP7 → HP12 · ${hpPct}%`}
+              pct={hpPct}
+              color="#3b82f6"
+            />
+            <MetricCard
+              label="Học liệu"
+              value={`${lessons.length} bài / ${slides.length} slide`}
+              sub="trong _shared/ và _content/"
+              pct={100}
+              color="#f59e0b"
+            />
+            <MetricCard
+              label="Phase hiện tại"
+              value={pendingItem?.phase || 'Done ✓'}
+              sub={pendingItem?.role ? `${pendingItem.role}: ${pendingItem.artifact}` : 'Toàn bộ pipeline xong'}
+              color="#8b95a8"
+            />
+          </section>
 
-            <section className="section">
-              <div className="section-header">
-                <h2>Pipeline Trạng thái</h2>
-                <span className="badge">Current Sprint</span>
+          <section className="main-grid">
+            <div className="panel">
+              <div className="panel-hdr">
+                <span>Pipeline Status</span>
+                <span className="panel-count">{stats.total} artifacts</span>
               </div>
               <PipelineTable rows={status.pipelineRows} />
-            </section>
-
-            <section className="section">
-              <div className="section-header">
-                <h2>Lộ trình Dự án</h2>
+            </div>
+            <div className="panel">
+              <div className="panel-hdr">
+                <span>Lộ trình HP</span>
+                <span className="panel-count">{stats.hpDone}/{stats.hpTotal} HP</span>
               </div>
               <RoadmapGrid roadmap={status.roadmap} />
-            </section>
-          </div>
-        )}
+            </div>
+          </section>
 
-        {activeTab === 'lessons' && (
-          <div className="lesson-container view-fade-in">
-            <LessonSidebar />
+          {status.changelog.length > 0 && (
+            <section className="panel changelog-panel">
+              <div className="panel-hdr">
+                <span>Nhật ký thay đổi (Project History)</span>
+                <span className="panel-count">{status.changelog.length} mục</span>
+              </div>
+              <div className="changelog-list">
+                {[...status.changelog].reverse().slice(0, 10).map((entry, i) => (
+                  <div key={i} className="changelog-item">
+                    <div className={`clog-dot ${entry.done ? 'clog-dot--done' : 'clog-dot--pend'}`} />
+                    {entry.date && <span className="clog-date">{entry.date}</span>}
+                    <span className="clog-text">{entry.text}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
+
+      {/* ── Viewer (Lessons & Slides) ── */}
+      {(tab === 'Lessons' || tab === 'Slides') && (
+        <section className="panel lesson-panel">
+          <div className="panel-hdr">
+            <span>{tab} Viewer</span>
+            <span className="panel-count">{tab === 'Lessons' ? lessons.length : slides.length} files</span>
+          </div>
+          <div className="lesson-layout">
+            <LessonSidebar forceType={tab === 'Lessons' ? 'lesson' : 'slide'} />
             <PreviewPanel />
           </div>
-        )}
+        </section>
+      )}
 
-        {activeTab === 'matrix' && (
-          <div className="matrix-view view-fade-in">
-            <section className="section">
-               <div className="section-header">
-                  <h2>Alignment Matrix</h2>
-                  <p>Check pedagogical consistency across all lessons.</p>
-               </div>
-               <PipelineTable rows={matrix} /> 
-            </section>
+      {/* ── Matrix tab ── */}
+      {tab === 'Matrix' && (
+        <section className="panel">
+          <div className="panel-hdr">
+            <span>Alignment Matrix</span>
+            <span className="panel-count">{matrix.length} hàng</span>
           </div>
-        )}
+          <AlignmentMatrix rows={matrix} />
+        </section>
+      )}
 
-        {activeTab === 'changelog' && (
-          <div className="changelog-view view-fade-in">
-             <section className="section">
-                <div className="section-header">
-                  <h2>Project Changelog</h2>
-                </div>
-                <div className="changelog-paper">
-                   <MarkdownRenderer content={changelog} />
-                </div>
-             </section>
+      {/* ── Not yet loaded ── */}
+      {!lastFetched && !loading && (
+        <div className="page-center" style={{ minHeight: '60vh' }}>
+          <div className="welcome-card">
+            <div className="welcome-icon">⬡</div>
+            <h2 className="welcome-title">{activeProject?.name || 'Curriculum Dashboard'}</h2>
+            <ProjectSelector />
+            <p className="welcome-sub" style={{ marginTop: '20px' }}>Chọn dự án và nhấn Refresh để tải dữ liệu</p>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }
