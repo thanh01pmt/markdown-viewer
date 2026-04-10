@@ -17,6 +17,12 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .sidebar-tab-btn:hover { background:var(--bg3); color:var(--text); }
 .sidebar-tab-btn.active { background:rgba(59,130,246,0.1); color:var(--blue); }
 .sidebar-tab-count { font-size:10px; padding:2px 8px; background:var(--bg3); border-radius:10px; color:var(--text3); }
+.sidebar-group-label { padding:14px 14px 6px; font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.06em; font-weight:600; }
+.sidebar-module-group { display:flex; flex-direction:column; gap:2px; margin-bottom:8px; }
+.sidebar-module-header { padding:8px 14px; font-size:12px; font-weight:600; color:var(--text2); display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; transition: color 0.2s; }
+.sidebar-module-header:hover { color:var(--text); }
+.chevron-icon { font-size:10px; transition: transform 0.2s; color:var(--text3); }
+.chevron-icon.collapsed { transform: rotate(-90deg); }
 .app-sidebar-footer { padding:16px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
 .app-main { flex:1; min-width:0; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:20px; }
 

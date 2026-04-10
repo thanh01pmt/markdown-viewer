@@ -21,7 +21,10 @@ export const useStore = create(
       projects: [],
       activeProject: 'pathway-aiot', // Default
       setActiveProject: (name) => {
-        set({ activeProject: name, status: null, matrix: [], lessons: [], slides: [], activeLesson: null });
+        set({ 
+          activeProject: name, status: null, matrix: [], lessons: [], slides: [], 
+          activeLesson: null, activeLessonPack: null, groupMode: 'type' 
+        });
         get().fetchAll();
       },
       setProjectByPath: (path) => get().setActiveProject(path),
@@ -45,6 +48,10 @@ export const useStore = create(
       setSearchQuery: (q) => set({ searchQuery: q }),
       filterHP: '', // e.g. 'HP7'
       setFilterHP: (hp) => set({ filterHP: hp }),
+      groupMode: 'type', // 'type' (Doc Type) or 'pack' (Lesson Pack)
+      setGroupMode: (mode) => set({ groupMode: mode, activeLessonPack: null }),
+      activeLessonPack: null, // e.g. 'HP7_01'
+      setActiveLessonPack: (pack) => set({ activeLessonPack: pack }),
 
       fetchAll: async () => {
         const { token, activeProject } = get();

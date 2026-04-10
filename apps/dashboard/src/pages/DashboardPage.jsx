@@ -16,10 +16,12 @@ export function DashboardPage() {
   const { 
     activeProject, status, matrix, lessons, slides,
     loading, error, lastFetched, refresh, fetchAll,
-    lessonType, lessonContent, setTokenGateOpen
+    lessonType, lessonContent, setTokenGateOpen,
+    groupMode, setGroupMode, activeLessonPack, setActiveLessonPack
   } = useStore();
   
   const [tab, setTab] = useState('Dashboard');
+  const [collapsedModules, setCollapsedModules] = useState({});
   const [showOutline, setShowOutline] = useState(true);
   const [showOutlineDialog, setShowOutlineDialog] = useState(false);
   const previewBodyRef = useRef(null);
@@ -40,10 +42,25 @@ export function DashboardPage() {
 
   const handleTabChange = (t) => {
     setTab(t);
-    // Auto-select type based on tab
-    if (t === 'Lessons') {
-      // if no active lesson of this type, keep it as is
-    }
+  };
+
+  // Lesson Pack Logic
+  const lessonPacks = Array.from(new Set([
+    ...lessons.map(l => l.name.match(/HP\d+_\d+/)?.[0]),
+    ...slides.map(s => s.name.match(/HP\d+_\d+/)?.[0])
+  ].filter(Boolean))).sort();
+
+  const packsByModule = lessonPacks.reduce((acc, packId) => {
+    const mod = packId.split('_')[0];
+    if (!acc[mod]) acc[mod] = [];
+    acc[mod].push(packId);
+    return acc;
+  }, {});
+
+  const formatPackName = (id) => id.replace('_', ' - ');
+
+  const toggleModule = (mod) => {
+    setCollapsedModules(prev => ({ ...prev, [mod]: !prev[mod] }));
   };
 
   return (
@@ -63,10 +80,27 @@ export function DashboardPage() {
             </div>
           </div>
           <ProjectSelector />
+          
+          <div className="segmented-control" style={{ width: '100%', marginTop: '4px' }}>
+            <button 
+              className={`segmented-btn ${groupMode === 'type' ? 'active' : ''}`}
+              onClick={() => setGroupMode('type')}
+              style={{ flex: 1 }}
+            >
+              Doc Type
+            </button>
+            <button 
+              className={`segmented-btn ${groupMode === 'pack' ? 'active' : ''}`}
+              onClick={() => setGroupMode('pack')}
+              style={{ flex: 1 }}
+            >
+              Lesson Pack
+            </button>
+          </div>
         </div>
 
         <nav className="app-sidebar-nav">
-          {lastFetched && TABS.map(t => (
+          {lastFetched && groupMode === 'type' && TABS.map(t => (
             <button
               key={t}
               className={`sidebar-tab-btn ${tab === t ? 'active' : ''}`}
@@ -84,6 +118,54 @@ export function DashboardPage() {
               )}
             </button>
           ))}
+
+          {lastFetched && groupMode === 'pack' && (
+            <>
+              <button
+                className={`sidebar-tab-btn ${tab === 'Dashboard' ? 'active' : ''}`}
+                onClick={() => handleTabChange('Dashboard')}
+              >
+                <span>Dashboard</span>
+              </button>
+              
+              <div className="sidebar-group-label">
+                Lesson Packs
+              </div>
+
+              {Object.entries(packsByModule).map(([mod, packs]) => {
+                const isCollapsed = collapsedModules[mod];
+                return (
+                  <div key={mod} className="sidebar-module-group">
+                    <div className="sidebar-module-header" onClick={() => toggleModule(mod)}>
+                      <span className={`chevron-icon ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
+                      <span>{mod}</span>
+                    </div>
+                    {!isCollapsed && packs.map(p => (
+                      <button
+                        key={p}
+                        className={`sidebar-tab-btn ${activeLessonPack === p ? 'active' : ''}`}
+                        onClick={() => {
+                          setActiveLessonPack(p);
+                          setTab('Lessons'); // Default to lessons view when pack selected
+                        }}
+                        style={{ paddingLeft: '24px' }}
+                      >
+                        <span>{formatPackName(p)}</span>
+                      </button>
+                    ))}
+                  </div>
+                );
+              })}
+
+              <button
+                className={`sidebar-tab-btn ${tab === 'Matrix' ? 'active' : ''}`}
+                onClick={() => handleTabChange('Matrix')}
+                style={{ marginTop: '8px' }}
+              >
+                <span>Matrix</span>
+              </button>
+            </>
+          )}
         </nav>
 
         <div className="app-sidebar-footer">

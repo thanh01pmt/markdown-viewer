@@ -4,11 +4,24 @@ export function LessonSidebar({ forceType }) {
   const { 
     lessons, slides, activeLesson, selectLesson, 
     searchQuery, setSearchQuery, 
-    filterHP, setFilterHP, loading
+    filterHP, setFilterHP, loading,
+    groupMode, activeLessonPack
   } = useStore();
 
-  const items = forceType === 'slide' ? slides : lessons;
-  const currentType = forceType || 'lesson';
+  let items = forceType === 'slide' ? slides : lessons;
+  let currentType = forceType || 'lesson';
+
+  if (groupMode === 'pack') {
+    items = [];
+    if (activeLessonPack) {
+      lessons.forEach(l => {
+        if (l.name.includes(activeLessonPack)) items.push({ ...l, type: 'lesson' });
+      });
+      slides.forEach(s => {
+        if (s.name.includes(activeLessonPack)) items.push({ ...s, type: 'slide' });
+      });
+    }
+  }
 
   if (loading && !items.length) {
     return (
@@ -27,14 +40,14 @@ export function LessonSidebar({ forceType }) {
   // Extract HP list for filter (HP7, HP8, ...)
   const hps = Array.from(new Set(items.map(l => l.name.match(/HP\d+/)?.[0]).filter(Boolean))).sort();
 
-  const formatName = (name) => {
-    // LESSON_HP7_01.md -> HP7 - 01
-    // SLIDE_HP7_01.md -> HP7 - 01 (Slide)
+  const formatName = (l) => {
+    const name = l.name;
+    const type = l.type || currentType;
     return name
       .replace('LESSON_', '')
       .replace('SLIDE_', '')
       .replace('.md', '')
-      .replace(/_/g, ' - ') + (forceType === 'slide' ? ' (Slide)' : '');
+      .replace(/_/g, ' - ') + (type === 'slide' ? ' (Slide)' : '');
   };
 
   return (
@@ -70,13 +83,15 @@ export function LessonSidebar({ forceType }) {
             <button
               key={l.path}
               className={`sidebar-item ${activeLesson?.path === l.path ? 'sidebar-item--active' : ''}`}
-              onClick={() => selectLesson(l, currentType)}
+              onClick={() => selectLesson(l, l.type || currentType)}
             >
-              <div className="sidebar-item-name">{formatName(l.name)}</div>
+              <div className="sidebar-item-name">{formatName(l)}</div>
             </button>
           ))
         ) : (
-          <div className="sidebar-empty">Không tìm thấy mục nào</div>
+          <div className="sidebar-empty">
+            {groupMode === 'pack' ? (activeLessonPack ? "Bài này chưa có học liệu" : "Chọn một bài ở sidebar trái") : "Không tìm thấy mục nào"}
+          </div>
         )}
       </div>
     </div>
