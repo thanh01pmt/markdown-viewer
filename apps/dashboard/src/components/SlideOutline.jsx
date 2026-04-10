@@ -1,6 +1,27 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { getHeadings } from '../utils/markdown';
 
+/**
+ * Finds an element by ID, searching into Shadow Roots if necessary.
+ */
+function findDeepElement(root, id) {
+  if (!root) return null;
+  const el = root.getElementById ? root.getElementById(id) : null;
+  if (el) return el;
+
+  // Search through all children
+  const children = root.children || (root.childNodes ? Array.from(root.childNodes) : []);
+  for (const child of children) {
+    if (child.shadowRoot) {
+      const found = findDeepElement(child.shadowRoot, id);
+      if (found) return found;
+    }
+    const found = findDeepElement(child, id);
+    if (found) return found;
+  }
+  return null;
+}
+
 export function SlideOutline({ content, scrollContainerRef, isDialog, onClose }) {
   const [activeId, setActiveId] = useState(null);
   const [filterText, setFilterText] = useState('');
@@ -35,7 +56,7 @@ export function SlideOutline({ content, scrollContainerRef, isDialog, onClose })
     });
 
     headings.forEach(h => {
-      const el = document.getElementById(h.id);
+      const el = findDeepElement(document, h.id);
       if (el) observerRef.current.observe(el);
     });
 
@@ -44,13 +65,15 @@ export function SlideOutline({ content, scrollContainerRef, isDialog, onClose })
 
   const handleItemClick = (e, id) => {
     e.preventDefault();
-    const el = document.getElementById(id);
+    const el = findDeepElement(document, id);
     if (el) {
       const container = scrollContainerRef?.current;
       if (container) {
-        // Special calculation for Marp slides: center or top the slide
-        const top = el.offsetTop - 16;
-        container.scrollTo({ top, behavior: 'smooth' });
+        const containerRect = container.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        // Calculate the top relative to the container for accurate scrolling
+        const relativeTop = elRect.top - containerRect.top + container.scrollTop;
+        container.scrollTo({ top: relativeTop - 16, behavior: 'smooth' });
       } else {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }

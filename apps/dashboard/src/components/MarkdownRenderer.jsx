@@ -51,11 +51,14 @@ function MarpRenderer({ rawContent }) {
       // Post-process HTML to inject IDs into headings for outline navigation
       if (processedHtml && marpHeadings.length > 0) {
         let headingIndex = 0;
-        // Regex to find h1, h2, h3 tags and inject id based on sequential index in shared headings list
-        processedHtml = processedHtml.replace(/<(h[1-3])([^>]*)>(.*?)<\/h[1-3]>/gi, (match, tag, attrs, text) => {
+        // More robust regex to find h1, h2, h3 tags and inject id
+        processedHtml = processedHtml.replace(/<(h[1-3])(\s+[^>]*)?>(.*?)<\/h[1-3]>/gi, (match, tag, attrs, text) => {
           if (headingIndex < marpHeadings.length) {
             const h = marpHeadings[headingIndex++];
-            return `<${tag}${attrs} id="${h.id}">${text}</${tag}>`;
+            let otherAttrs = attrs || '';
+            // Strip existing id if present so our injected id takes precedence
+            otherAttrs = otherAttrs.replace(/\s+id=["'][^"']*["']/i, '');
+            return `<${tag}${otherAttrs} id="${h.id}">${text}</${tag}>`;
           }
           return match;
         });
