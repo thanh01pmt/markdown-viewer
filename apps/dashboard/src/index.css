@@ -305,8 +305,18 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.1); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg)} }
 .md-content { max-width:780px; }
-.md-content.is-marp { max-width: none; }
-.preview-box-body:has(.is-marp) { padding: 0; }
+.md-content.is-marp {
+  max-width: none;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.preview-box-body:has(.is-marp) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 .md-content h1 { font-size:20px; font-weight:600; color:var(--text); margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
 .md-content h2 { font-size:16px; font-weight:500; color:var(--text); margin:22px 0 10px; }
 .md-content h3 { font-size:14px; font-weight:500; color:var(--text2); margin:16px 0 8px; }
@@ -637,3 +647,63 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .md-meta-badge.sme-mandate .md-meta-value {
   border-left: none;
 }
+
+/* ── Marp Presentation View ──────────────────────────────────── */
+.marp-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #0d1017;
+  padding: 40px 24px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.marp-slides {
+  width: 100%;
+  max-width: 960px;
+}
+/* Style each Marp <section> (slide) as a card */
+.marp-slides section,
+.marp-slides > svg > foreignObject > section {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 40px;
+  background: #fff;
+  color: #222;
+}
+.marp-slides section:last-child,
+.marp-slides > svg:last-child > foreignObject > section { margin-bottom: 0; }
+/* Marp wraps each slide in an <svg> — make sure they stack nicely */
+.marp-slides > svg {
+  display: block;
+  margin: 0 auto 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.2);
+  overflow: hidden;
+  max-width: 100%;
+  height: auto !important;
+}
+.marp-slides > svg:last-child { margin-bottom: 0; }
+
+/* Marp error fallback */
+.marp-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--text3);
+}
+.marp-error-icon { font-size: 32px; opacity: 0.6; }
+.marp-error h3 { font-size: 16px; font-weight: 600; color: var(--text2); margin: 0; }
+.marp-error p { font-size: 13px; color: var(--text3); margin: 0; max-width: 400px; }
+
+/* Custom scrollbar for marp wrapper */
+.marp-wrapper::-webkit-scrollbar { width: 8px; }
+.marp-wrapper::-webkit-scrollbar-track { background: #0d1017; }
+.marp-wrapper::-webkit-scrollbar-thumb { background: #2a2f3a; border-radius: 4px; }
+.marp-wrapper::-webkit-scrollbar-thumb:hover { background: #3a404d; }
