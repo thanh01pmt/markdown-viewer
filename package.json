@@ -7,7 +7,7 @@
 	},
 	"packageManager": "pnpm@9.1.4",
 	"scripts": {
-		"dev": "concurrently \"cd apps/dashboard && pnpm dev\" \"cd apps/dashboard && netlify functions:serve -f functions --port 9999 --offline\"",
+		"dev": "cp .env apps/dashboard/.env && concurrently \"cd apps/dashboard && pnpm dev\" \"cd apps/dashboard && netlify functions:serve -f functions --port 9999 --offline\"",
 		"dev:vite": "turbo run dev",
 		"build": "turbo run build",
 		"lint": "turbo run lint",

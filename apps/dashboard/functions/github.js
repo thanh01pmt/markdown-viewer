@@ -1,4 +1,5 @@
 /* global process */
+import { Buffer } from 'node:buffer';
 const OWNER = 'thanh01pmt';
 const REPO = 'my-agents';
 const BRANCH = 'main';
@@ -9,11 +10,14 @@ export const handler = async (event) => {
   const token = process.env.GITHUB_TOKEN;
 
   if (!token) {
+    console.error('❌ GITHUB_TOKEN is missing in process.env');
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'GITHUB_TOKEN not configured on server' }),
     };
   }
+
+  console.log(`📡 [Proxy Request] path: ${githubPath || '(none)'}, action: ${action || '(none)'}, project: ${project || '(none)'}`);
 
   const headers = {
     'Accept': 'application/vnd.github.v3+json',
@@ -66,8 +70,49 @@ export const handler = async (event) => {
       };
     }
 
-    // --- 2. Generic Proxy for Single Path ---
+    // --- 2. Generic Proxy for Single Path (Supports Images) ---
     if (githubPath) {
+      const isImg = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'].some(ext => githubPath.toLowerCase().endsWith(ext));
+      
+      // If it's an image, we want the raw binary content
+      if (isImg) {
+        const rawUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${githubPath}?ref=${BRANCH}`;
+        const rawRes = await fetch(rawUrl, {
+          headers: {
+            ...headers,
+            'Accept': 'application/vnd.github.v3.raw',
+          }
+        });
+
+        if (!rawRes.ok) {
+          return {
+            statusCode: rawRes.status,
+            body: JSON.stringify({ error: `GitHub image error: ${rawRes.statusText}` }),
+          };
+        }
+
+        const buffer = await rawRes.arrayBuffer();
+        const base64 = Buffer.from(buffer).toString('base64');
+        
+        // Determine Content-Type
+        let contentType = 'image/png';
+        if (githubPath.endsWith('.jpg') || githubPath.endsWith('.jpeg')) contentType = 'image/jpeg';
+        else if (githubPath.endsWith('.svg')) contentType = 'image/svg+xml';
+        else if (githubPath.endsWith('.webp')) contentType = 'image/webp';
+        else if (githubPath.endsWith('.gif')) contentType = 'image/gif';
+
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': 'public, max-age=3600',
+          },
+          body: base64,
+          isBase64Encoded: true,
+        };
+      }
+
+      // Default: Fetch JSON metadata for other files
       const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${githubPath}?ref=${BRANCH}`;
       const res = await fetch(url, { headers });
       
