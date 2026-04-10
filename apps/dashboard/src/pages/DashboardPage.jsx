@@ -9,6 +9,8 @@ import { AlignmentMatrix } from '../components/AlignmentMatrix';
 import { ProjectSelector } from '../components/ProjectSelector';
 import { DocOutline } from '../components/DocOutline';
 import { SlideOutline } from '../components/SlideOutline';
+import { CommandPalette } from '../components/CommandPalette';
+import { Search } from 'lucide-react';
 
 const TABS = ['Dashboard', 'Lessons', 'Slides', 'Assets', 'Code', 'Matrix', 'Audits'];
 
@@ -26,9 +28,21 @@ export function DashboardPage() {
   const [collapsedModules, setCollapsedModules] = useState({});
   const [showOutline, setShowOutline] = useState(true);
   const [showOutlineDialog, setShowOutlineDialog] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const previewBodyRef = useRef(null);
 
   useEffect(() => { if (!lastFetched) fetchAll(); }, [lastFetched, fetchAll]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Sync tab with store lessonType if user clicks sidebar items
   useEffect(() => {
@@ -105,7 +119,17 @@ export function DashboardPage() {
               )}
             </div>
           </div>
-          <ProjectSelector />
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ flex: 1 }}><ProjectSelector /></div>
+            <button 
+              className="action-icn-btn" 
+              onClick={() => setIsCommandPaletteOpen(true)}
+              title="Search (Cmd+K)"
+              style={{ border: '1px solid var(--border2)', background: 'var(--bg3)' }}
+            >
+              <Search size={16} />
+            </button>
+          </div>
           
           <div className="segmented-control" style={{ width: '100%', marginTop: '4px' }}>
             <button 
@@ -451,6 +475,11 @@ export function DashboardPage() {
         </div>
       )}
       </main>
+
+      <CommandPalette 
+        isOpen={isCommandPaletteOpen} 
+        onClose={() => setIsCommandPaletteOpen(false)} 
+      />
     </div>
   );
 }
