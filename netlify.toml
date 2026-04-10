@@ -1,0 +1,11 @@
+[build]
+  base = "apps/dashboard"
+  command = "pnpm build"
+  publish = "dist"
+
+[context.production]
+  branch = "stable"
+
+[functions]
+  directory = "functions"
+  node_bundler = "esbuild"
