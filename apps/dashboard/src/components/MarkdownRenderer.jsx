@@ -1,10 +1,12 @@
-import { Suspense, lazy, useMemo, useEffect } from 'react';
+import { Suspense, lazy, useMemo, useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { Marp } from '@marp-team/marp-core';
 import { extractMetadata, getHeadings } from '../utils/markdown';
+import { createPortal } from 'react-dom';
+import { X, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 
 // Lazy-load the heavy syntax highlighter
 const SyntaxHighlighter = lazy(() =>
@@ -121,6 +123,82 @@ function MarpRenderer({ rawContent }) {
   );
 }
 
+function ImageModal({ src, alt, onClose }) {
+  useEffect(() => {
+    // Prevent scrolling behind modal
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = 'auto'; };
+  }, []);
+
+  const [scale, setScale] = useState(1);
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  return createPortal(
+    <div className="img-modal-overlay" onClick={onClose}>
+      <div className="img-modal-hdr" onClick={e => e.stopPropagation()}>
+        <span className="img-modal-title">{alt || 'Xem ảnh'}</span>
+        <div className="img-modal-actions">
+          <button className="img-modal-btn" onClick={() => setScale(s => Math.max(0.5, s - 0.2))}>
+            <ZoomOut size={16} />
+          </button>
+          <span className="img-modal-scale">{Math.round(scale * 100)}%</span>
+          <button className="img-modal-btn" onClick={() => setScale(s => Math.min(3, s + 0.2))}>
+            <ZoomIn size={16} />
+          </button>
+          <button className={`img-modal-btn ${isMaximized ? 'active' : ''}`} onClick={() => {
+            setIsMaximized(!isMaximized);
+            setScale(1);
+          }}>
+            <Maximize2 size={16} />
+          </button>
+          <div className="img-modal-sep" />
+          <button className="img-modal-btn close" onClick={onClose}>
+            <X size={18} />
+          </button>
+        </div>
+      </div>
+      <div className="img-modal-body">
+        <div className="img-modal-scroll">
+          <img 
+            src={src} 
+            alt={alt} 
+            style={{ 
+              transform: `scale(${scale})`,
+              maxWidth: isMaximized ? 'none' : '90vw',
+              maxHeight: isMaximized ? 'none' : '85vh',
+              transition: 'transform 0.2s ease-out, max-width 0.2s, max-height 0.2s',
+              cursor: scale > 1 ? 'move' : 'default'
+            }}
+            onClick={e => e.stopPropagation()} 
+          />
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function MarkdownImage({ src, alt }) {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return (
+    <>
+      <div className="md-img-container">
+        <img 
+          src={src} 
+          alt={alt} 
+          onClick={() => setModalOpen(true)}
+          title="Click để phóng to"
+        />
+        {alt && <span className="md-img-caption">{alt}</span>}
+      </div>
+      {modalOpen && (
+        <ImageModal src={src} alt={alt} onClose={() => setModalOpen(false)} />
+      )}
+    </>
+  );
+}
+
 export function MarkdownRenderer({ content, forcedMode = 'slide' }) {
   const { processedContent, mdMeta, isMarp, rawContent } = useMemo(() => extractMetadata(content), [content]);
 
@@ -178,6 +256,9 @@ export function MarkdownRenderer({ content, forcedMode = 'slide' }) {
           a({ href, children }) {
             return <a href={href} target="_blank" rel="noreferrer" style={{ color: 'var(--blue)', textDecoration: 'none' }}>{children}</a>;
           },
+          img({ src, alt }) {
+            return <MarkdownImage src={src} alt={alt} />;
+          }
         }}
       >
         {processedContent}
