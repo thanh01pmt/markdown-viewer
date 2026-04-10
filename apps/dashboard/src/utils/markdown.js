@@ -1,3 +1,5 @@
+import GithubSlugger from 'github-slugger';
+
 const TECHNICAL_KEYS = [
   'marp', 'theme', 'size', 'paginate', 'header', 'footer', 'style', 'class',
   'headingdivider', 'color', 'background', 'background-color', 'border', 'border-left',
@@ -95,5 +97,25 @@ export function extractMetadata(content) {
     isMarp, 
     rawContent: rawContentForMarp 
   };
+}
+
+export function getHeadings(content) {
+  if (!content) return [];
+  const slugger = new GithubSlugger();
+  // Strip frontmatter before parsing headings
+  const fmRegex = /^\s*---\s*\n([\s\S]*?)\n---\s*\n?/;
+  const stripped = content.replace(fmRegex, '');
+  
+  // Also strip HTML comments which might contain metadata that shouldn't be headings
+  const cleanContent = stripped.replace(/<!--[\s\S]*?-->/g, '');
+  
+  const matches = Array.from(cleanContent.matchAll(/^(#{1,3})\s+(.+)$/gm));
+  return matches.map(m => {
+    const level = m[1].length;
+    const text = m[2].trim();
+    // Use the same slugification as LessonOutline (strip Markdown from text before slugging)
+    const id = slugger.slug(text);
+    return { level, text, id };
+  });
 }
 

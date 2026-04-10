@@ -1,24 +1,12 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
-import GithubSlugger from 'github-slugger';
+import { getHeadings } from '../utils/markdown';
 
-export function LessonOutline({ content, scrollContainerRef, isDialog, onClose }) {
+export function SlideOutline({ content, scrollContainerRef, isDialog, onClose }) {
   const [activeId, setActiveId] = useState(null);
   const [filterText, setFilterText] = useState('');
   const observerRef = useRef(null);
 
-  const headings = useMemo(() => {
-    if (!content) return [];
-    const slugger = new GithubSlugger();
-    // Strip frontmatter before parsing headings
-    const stripped = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '');
-    const matches = Array.from(stripped.matchAll(/^(#{1,3})\s+(.+)$/gm));
-    return matches.map(m => {
-      const level = m[1].length;
-      const text = m[2].trim();
-      const id = slugger.slug(text);
-      return { level, text, id };
-    });
-  }, [content]);
+  const headings = useMemo(() => getHeadings(content), [content]);
 
   const filtered = useMemo(() => {
     if (!filterText) return headings;
@@ -60,7 +48,8 @@ export function LessonOutline({ content, scrollContainerRef, isDialog, onClose }
     if (el) {
       const container = scrollContainerRef?.current;
       if (container) {
-        const top = el.offsetTop - 24;
+        // Special calculation for Marp slides: center or top the slide
+        const top = el.offsetTop - 16;
         container.scrollTo({ top, behavior: 'smooth' });
       } else {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -73,9 +62,9 @@ export function LessonOutline({ content, scrollContainerRef, isDialog, onClose }
   if (headings.length === 0) return null;
 
   const inner = (
-    <div className="outline-inner">
+    <div className="outline-inner slide-outline-inner">
       <div className="outline-hdr">
-        <span>Outline</span>
+        <span>Slide Outline</span>
         {isDialog && (
           <button className="outline-close-btn" onClick={onClose} title="Đóng">
             <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
@@ -122,7 +111,7 @@ export function LessonOutline({ content, scrollContainerRef, isDialog, onClose }
   }
 
   return (
-    <div className="lesson-outline">
+    <div className="lesson-outline slide-outline">
       {inner}
     </div>
   );

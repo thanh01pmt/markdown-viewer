@@ -7,7 +7,8 @@ import { LessonSidebar } from '../components/LessonSidebar';
 import { PreviewPanel } from '../components/PreviewPanel';
 import { AlignmentMatrix } from '../components/AlignmentMatrix';
 import { ProjectSelector } from '../components/ProjectSelector';
-import { LessonOutline } from '../components/LessonOutline';
+import { DocOutline } from '../components/DocOutline';
+import { SlideOutline } from '../components/SlideOutline';
 
 const TABS = ['Dashboard', 'Lessons', 'Slides', 'Matrix'];
 
@@ -200,20 +201,36 @@ export function DashboardPage() {
             {/* Right sidebar outline — desktop only */}
             <div className="lesson-outline-wrapper">
               {showOutline && (
-                <LessonOutline 
-                  content={lessonContent} 
-                  scrollContainerRef={previewBodyRef} 
-                />
+                tab === 'Slides' ? (
+                  <SlideOutline 
+                    content={lessonContent} 
+                    scrollContainerRef={previewBodyRef} 
+                  />
+                ) : (
+                  <DocOutline 
+                    content={lessonContent} 
+                    scrollContainerRef={previewBodyRef} 
+                  />
+                )
               )}
             </div>
             {/* Dialog outline — mobile only */}
             {showOutlineDialog && (
-              <LessonOutline 
-                content={lessonContent}
-                scrollContainerRef={previewBodyRef}
-                isDialog
-                onClose={() => setShowOutlineDialog(false)}
-              />
+              tab === 'Slides' ? (
+                <SlideOutline 
+                  content={lessonContent}
+                  scrollContainerRef={previewBodyRef}
+                  isDialog
+                  onClose={() => setShowOutlineDialog(false)}
+                />
+              ) : (
+                <DocOutline 
+                  content={lessonContent}
+                  scrollContainerRef={previewBodyRef}
+                  isDialog
+                  onClose={() => setShowOutlineDialog(false)}
+                />
+              )
             )}
           </div>
         </section>

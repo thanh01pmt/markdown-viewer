@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { Marp } from '@marp-team/marp-core';
-import { extractMetadata } from '../utils/markdown';
+import { extractMetadata, getHeadings } from '../utils/markdown';
 
 // Lazy-load the heavy syntax highlighter
 const SyntaxHighlighter = lazy(() =>
@@ -35,13 +35,7 @@ function CodeBlock({ language, children }) {
   );
 }
 
-// SVG link icon as hast node (invisible by default, shown on hover via CSS)
-const anchorIcon = {
-  type: 'element',
-  tagName: 'span',
-  properties: { className: ['anchor-icon'], ariaHidden: 'true' },
-  children: [{ type: 'text', value: '#' }],
-};
+// The anchor icon is no longer used as we wrap the entire heading text in the anchor link.
 
 function MarpRenderer({ rawContent }) {
   const { html, css, error } = useMemo(() => {
@@ -51,8 +45,24 @@ function MarpRenderer({ rawContent }) {
     try {
       const marp = new Marp({ html: true });
       const rendered = marp.render(content);
+      const marpHeadings = getHeadings(content);
+      let processedHtml = rendered?.html || '';
+
+      // Post-process HTML to inject IDs into headings for outline navigation
+      if (processedHtml && marpHeadings.length > 0) {
+        let headingIndex = 0;
+        // Regex to find h1, h2, h3 tags and inject id based on sequential index in shared headings list
+        processedHtml = processedHtml.replace(/<(h[1-3])([^>]*)>(.*?)<\/h[1-3]>/gi, (match, tag, attrs, text) => {
+          if (headingIndex < marpHeadings.length) {
+            const h = marpHeadings[headingIndex++];
+            return `<${tag}${attrs} id="${h.id}">${text}</${tag}>`;
+          }
+          return match;
+        });
+      }
+
       return {
-        html: rendered?.html || '',
+        html: processedHtml,
         css: rendered?.css || '',
       };
     } catch (e) {
@@ -114,9 +124,8 @@ export function MarkdownRenderer({ content, forcedMode = 'slide' }) {
         rehypePlugins={[
           rehypeSlug,
           [rehypeAutolinkHeadings, {
-            behavior: 'prepend',
-            properties: { className: ['anchor-link'], ariaHidden: 'true', tabIndex: -1 },
-            content: anchorIcon,
+            behavior: 'wrap',
+            properties: { className: ['anchor-link'], ariaHidden: 'true', tabIndex: -1 }
           }]
         ]}
         components={{

@@ -324,27 +324,26 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .md-content h2 { font-size:16px; font-weight:500; color:var(--text); margin:22px 0 10px; }
 .md-content h3 { font-size:14px; font-weight:500; color:var(--text2); margin:16px 0 8px; }
 .md-content p { font-size:14px; color:var(--text2); line-height:1.75; margin-bottom:12px; }
-.md-content [id] { scroll-margin-top: 24px; }
 .md-content h1, .md-content h2, .md-content h3 { position: relative; }
-/* Anchor link: icon is hidden by default, shown on heading hover */
+
+/* Wrapped anchor headings */
+.anchor-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  display: block; /* Ensure it covers the whole line if needed, or inline-block */
+  width: 100%;
+  transition: color 0.2s;
+}
+
 .md-content h1:hover .anchor-link,
 .md-content h2:hover .anchor-link,
-.md-content h3:hover .anchor-link { opacity: 1; }
-.anchor-link {
-  position: absolute;
-  left: -20px;
+.md-content h3:hover .anchor-link {
   color: var(--blue);
-  opacity: 0;
-  transition: opacity 0.2s;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
 }
-/* Hide the # text with font-size trick, show svg icon instead */
+
 .anchor-icon {
-  font-size: 0.8em;
-  color: var(--blue);
-  user-select: none;
+  display: none; /* Icon is removed in favor of wrapping */
 }
 .md-content ul,.md-content ol { padding-left:20px; margin-bottom:12px; }
 .md-content li { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:4px; }
@@ -532,15 +531,16 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 }
 .outline-item {
   display: block;
-  padding: 6px 16px;
-  font-size: 12px;
-  color: var(--text2);
+  padding: 8px 16px;
+  color: var(--text-secondary);
   text-decoration: none;
-  border-left: 2px solid transparent;
+  font-size: 13px;
+  border-radius: 6px;
   transition: all 0.2s;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
 }
 .outline-item:hover {
   background: var(--bg3);
@@ -551,9 +551,44 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
   border-left-color: var(--blue);
   background: rgba(59, 130, 246, 0.05);
 }
-.outline-item--h1 { font-weight: 600; padding-left: 16px; }
-.outline-item--h2 { padding-left: 28px; }
-.outline-item--h3 { padding-left: 40px; font-size: 11px; }
+.outline-item--h1 { 
+  font-weight: 600; 
+  padding-left: 16px; 
+  color: var(--text-primary);
+}
+
+.outline-item--h2 { 
+  padding-left: 36px; 
+}
+
+.outline-item--h2::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.outline-item--h3 { 
+  padding-left: 56px; 
+  font-size: 12px; 
+}
+
+.outline-item--h3::before {
+  content: "";
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  background: var(--border-color);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
 
 .btn-toggle-outline {
   padding: 6px;
@@ -700,7 +735,6 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
   align-items: center;
   background: #0d1017;
   padding: 40px 24px;
-  overflow-y: auto;
   min-height: 0;
 }
 .marp-slides {
@@ -746,8 +780,8 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .marp-error h3 { font-size: 16px; font-weight: 600; color: var(--text2); margin: 0; }
 .marp-error p { font-size: 13px; color: var(--text3); margin: 0; max-width: 400px; }
 
-/* Custom scrollbar for marp wrapper */
-.marp-wrapper::-webkit-scrollbar { width: 8px; }
-.marp-wrapper::-webkit-scrollbar-track { background: #0d1017; }
-.marp-wrapper::-webkit-scrollbar-thumb { background: #2a2f3a; border-radius: 4px; }
-.marp-wrapper::-webkit-scrollbar-thumb:hover { background: #3a404d; }
+/* Custom scrollbar for preview box body when showing slides */
+.preview-box-body:has(.is-marp-presentation)::-webkit-scrollbar { width: 8px; }
+.preview-box-body:has(.is-marp-presentation)::-webkit-scrollbar-track { background: #0d1017; }
+.preview-box-body:has(.is-marp-presentation)::-webkit-scrollbar-thumb { background: #2a2f3a; border-radius: 4px; }
+.preview-box-body:has(.is-marp-presentation)::-webkit-scrollbar-thumb:hover { background: #3a404d; }
