@@ -9,8 +9,22 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
     activeLesson, lessonContent, lessonLoading, clearLesson,
     renderMode, setRenderMode 
   } = useStore();
-  const [viewMode, setViewMode] = useState('preview'); // 'preview' | 'raw'
   const [copying, setCopying] = useState(false);
+
+  const isMarkdown = activeLesson?.path?.endsWith('.md');
+  const isImage = activeLesson?.path?.match(/\.(png|jpe?g|gif|svg|webp)$/i);
+
+  // Reset view mode when lesson changes
+  const [prevPath, setPrevPath] = useState(activeLesson?.path);
+  const [viewMode, setViewMode] = useState((isMarkdown || isImage) ? 'preview' : 'raw');
+
+  // If it's an image, we should probably hide the stats or adjust them
+  const isBinary = isImage || (!isMarkdown && !lessonContent && !lessonLoading);
+
+  if (activeLesson?.path !== prevPath) {
+    setPrevPath(activeLesson?.path);
+    setViewMode((isMarkdown || isImage) ? 'preview' : 'raw');
+  }
 
   const { isMarp } = useMemo(() => extractMetadata(lessonContent), [lessonContent]);
 
@@ -73,9 +87,14 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
         {/* Box Header */}
         <div className="preview-box-header">
           <div className="preview-box-header-left">
-            {!lessonLoading && (
+            {!lessonLoading && !isBinary && (
               <span className="preview-file-meta">
                 {lineCount} lines · {wordCount} words · {kbSize} KB · ~{readTime} min read
+              </span>
+            )}
+            {!lessonLoading && isImage && (
+              <span className="preview-file-meta">
+                Image Asset · {kbSize} KB
               </span>
             )}
           </div>
@@ -97,7 +116,7 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
                 </button>
               </div>
 
-              {isMarp && viewMode === 'preview' && (
+              {isMarkdown && isMarp && viewMode === 'preview' && (
                 <div className="segmented-control">
                   <button 
                     className={`segmented-btn flex items-center gap-1.5 ${renderMode === 'slide' ? 'active' : ''}`}
@@ -170,8 +189,20 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
             </div>
           ) : viewMode === 'raw' ? (
             <pre className="raw-view">{lessonContent}</pre>
-          ) : (
+          ) : isImage ? (
+            <div className="preview-image-container">
+              <img src={`/.netlify/functions/github?path=${encodeURIComponent(activeLesson.path)}`} alt={activeLesson.name} />
+            </div>
+          ) : isMarkdown ? (
             <MarkdownRenderer content={lessonContent} forcedMode={renderMode} />
+          ) : lessonContent ? (
+            <pre className="raw-view">{lessonContent}</pre>
+          ) : (
+            <div className="preview-empty-state">
+              <div className="preview-empty-icon">📭</div>
+              <div className="preview-empty-title">Không có nội dung</div>
+              <div className="preview-empty-sub">Tệp này trống hoặc không thể đọc được dưới dạng văn bản.</div>
+            </div>
           )}
         </div>
       </div>

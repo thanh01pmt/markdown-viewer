@@ -115,6 +115,14 @@ export async function fetchLessonContent(lessonPath, token) {
   return fetchFileContent(lessonPath, token);
 }
 
+export async function fetchAssets(path, token) {
+  return fetchDirContents(path, token);
+}
+
+export async function fetchCodeFiles(path, token) {
+  return fetchDirContents(path, token);
+}
+
 export async function fetchAuditReports(path, token) {
   const files = await fetchDirContents(path, token);
   const jsonFiles = files.filter(f => f.name.endsWith('.json'));

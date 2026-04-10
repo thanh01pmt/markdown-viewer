@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import {
   fetchProjects, fetchProjectStatus, fetchAlignmentMatrix,
   fetchLessons, fetchLessonContent, fetchSlides, fetchChangelog, fetchAuditReports, clearCache,
-  fetchAggrData
+  fetchAggrData, fetchAssets, fetchCodeFiles
 } from '../api/github';
 import { parseProjectStatus, parseAlignmentMatrix } from '../utils/parsers';
 import { getProjectFiles } from '../config';
@@ -34,6 +34,8 @@ export const useStore = create(
       matrix: [],
       lessons: [],
       slides: [],
+      assets: [],
+      codeFiles: [],
       changelog: '',
       audits: [],
       loading: false,
@@ -61,7 +63,7 @@ export const useStore = create(
         set({ loading: true, error: null });
         
         try {
-          let statusMd = '', matrixMd = '', lessonFiles = [], slideFiles = [], changelogMd = '', projs = [], reports = [];
+          let statusMd = '', matrixMd = '', lessonFiles = [], slideFiles = [], assetFiles = [], codeFiles = [], changelogMd = '', projs = [], reports = [];
 
           if (!token) {
             // Use optimized aggregated fetch via Netlify Function
@@ -83,11 +85,24 @@ export const useStore = create(
             changelogMd = decode(aggr.changelog);
             lessonFiles = aggr.lessons.filter(f => f.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name));
             slideFiles = aggr.slides.filter(f => f.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name));
+            const getShortPath = (fullPath, rootDir) => {
+              const parts = fullPath.split(`/${rootDir}/`);
+              return parts.length > 1 ? parts[1] : fullPath.split('/').pop();
+            };
+
+            assetFiles = (aggr.assets || []).filter(f => f.type === 'file')
+              .map(f => ({ ...f, displayName: getShortPath(f.path, '_assets') }))
+              .sort((a, b) => a.displayName.localeCompare(b.displayName));
+            
+            codeFiles = (aggr.code || []).filter(f => f.type === 'file')
+              .map(f => ({ ...f, displayName: getShortPath(f.path, '_code') }))
+              .sort((a, b) => a.displayName.localeCompare(b.displayName));
+            
             projs = projectList;
           } else {
             // Legacy/Override: Fallback to individual calls (parallelized)
             const files = getProjectFiles(activeProject);
-            const [s, m, l, sl, c, p, r] = await Promise.all([
+            const [s, m, l, sl, c, p, r, ass, cod] = await Promise.all([
               fetchProjectStatus(files.projectStatus, token),
               fetchAlignmentMatrix(files.alignmentMatrix, token).catch(() => ''),
               fetchLessons(files.lessonsDir, token).catch(() => []),
@@ -95,8 +110,12 @@ export const useStore = create(
               fetchChangelog(files.changelog, token).catch(() => ''),
               fetchProjects(token).catch(() => []),
               fetchAuditReports(files.reportsDir, token).catch(() => []),
+              fetchAssets(files.assetsDir, token).catch(() => []),
+              fetchCodeFiles(files.codeDir, token).catch(() => []),
             ]);
             statusMd = s; matrixMd = m; lessonFiles = l; slideFiles = sl; changelogMd = c; projs = p; reports = r;
+            assetFiles = ass.filter(f => f.type === 'file'); 
+            codeFiles = cod.filter(f => f.type === 'file');
           }
           
           set({
@@ -104,6 +123,8 @@ export const useStore = create(
             matrix: parseAlignmentMatrix(matrixMd),
             lessons: lessonFiles,
             slides: slideFiles,
+            assets: assetFiles,
+            codeFiles: codeFiles,
             changelog: changelogMd,
             projects: projs,
             audits: reports,
@@ -126,6 +147,13 @@ export const useStore = create(
           lessonContent: '' 
         });
         try {
+          const isImage = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'].some(ext => lesson.path.toLowerCase().endsWith(ext));
+          
+          if (isImage) {
+            set({ lessonContent: '', lessonLoading: false });
+            return;
+          }
+
           const content = await fetchLessonContent(lesson.path, token);
           set({ lessonContent: content, lessonLoading: false });
         } catch {

@@ -35,27 +35,48 @@ export const handler = async (event) => {
         changelog: `${base}/CHANGELOG.md`,
         lessons: `${base}/_shared/LESSONS`,
         slides: `${base}/_shared/SLIDES`,
+        assets: `${base}/_assets`,
+        code: `${base}/_code`,
+      };
+
+      const fetchRecursive = async (p, depth = 0) => {
+        if (depth > 3) return []; // Limit depth to avoid explosion
+        const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${p}?ref=${BRANCH}`;
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+          console.warn(`Failed to fetch ${p}: ${res.statusText}`);
+          return [];
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) return [data];
+
+        let results = [];
+        for (const item of data) {
+          if (item.type === 'dir') {
+            const subFiles = await fetchRecursive(item.path, depth + 1);
+            results = results.concat(subFiles);
+          } else {
+            results.push(item);
+          }
+        }
+        return results;
       };
 
       const fetchContent = async (p) => {
         const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${p}?ref=${BRANCH}`;
         const res = await fetch(url, { headers });
-        if (!res.ok) {
-          if (res.status === 403 || res.status === 429) {
-            throw new Error(`Rate Limit Exceeded for ${p}`);
-          }
-          console.warn(`Failed to fetch ${p}: ${res.statusText}`);
-          return null; // For 404 or others, return null
-        }
+        if (!res.ok) return null;
         return res.json();
       };
 
-      const [status, matrix, changelog, lessons, slides] = await Promise.all([
+      const [status, matrix, changelog, lessons, slides, assets, code] = await Promise.all([
         fetchContent(paths.status),
         fetchContent(paths.matrix),
         fetchContent(paths.changelog),
         fetchContent(paths.lessons),
         fetchContent(paths.slides),
+        fetchRecursive(paths.assets),
+        fetchRecursive(paths.code),
       ]);
 
       return {
@@ -66,6 +87,8 @@ export const handler = async (event) => {
           changelog,
           lessons: Array.isArray(lessons) ? lessons : [],
           slides: Array.isArray(slides) ? slides : [],
+          assets: Array.isArray(assets) ? assets : [],
+          code: Array.isArray(code) ? code : [],
         }),
       };
     }

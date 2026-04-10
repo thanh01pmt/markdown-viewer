@@ -431,44 +431,156 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .token-footer code { font-size:10px; }
 
 /* ── Alignment Matrix ────────────────────────────────────────── */
-/* Utility & Components */
-.alert-banner {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  border: 1px solid #f87171;
-  color: #991b1b;
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
+.matrix-tab-container { display:flex; flex-direction:column; height:100%; min-height:0; }
+.matrix-controls {
+  padding: 16px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.matrix-filters-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.matrix-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+.matrix-search-wrap input {
+  width: 100%;
+  padding: 8px 12px 8px 34px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s;
+}
+.matrix-search-wrap input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+.matrix-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  pointer-events: none;
+}
+.matrix-status-filters {
+  display: flex;
+  gap: 6px;
+}
+.status-filter-btn {
+  padding: 5px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.status-filter-btn:hover {
+  color: var(--text2);
+  border-color: var(--text3);
+}
+.status-filter-btn.active {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
 }
 
-.alert-banner b {
-  font-weight: 800;
+.matrix-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  background: rgba(59, 130, 246, 0.03);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+.matrix-summary-stat {
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.matrix-summary-stat b { color: var(--text); }
+.matrix-progress-track {
+  flex: 1;
+  height: 6px;
+  background: var(--bg3);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 200px;
+}
+.matrix-progress-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.matrix-wrap { 
+  overflow: auto; 
+  flex: 1; 
+  min-height: 0; 
+  position: relative;
+  scrollbar-gutter: stable;
+}
+.matrix-table { width:100%; border-collapse:separate; border-spacing:0; font-size:12px; }
+.matrix-table thead { position: sticky; top: 0; z-index: 10; }
+.matrix-table th { 
+  background: var(--bg2); 
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 12px 14px; 
+  text-align: left; 
+  font-weight: 600; 
+  color: var(--text); 
+  border-bottom: 2px solid var(--border2); 
+  font-size: 11px; 
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: .05em; 
+  white-space: nowrap; 
 }
-
-.resource-tag {
-  display: inline-block;
-  background: #f3f4f6;
-  padding: 2px 8px;
+.matrix-table td { 
+  padding: 12px 14px; 
+  color: var(--text2); 
+  border-bottom: 1px solid var(--border); 
+  vertical-align: top;
+  transition: background 0.1s;
+}
+.matrix-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+.matrix-lesson-link {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--blue);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 2px 4px;
   border-radius: 4px;
-  font-size: 0.75rem;
-  margin: 2px;
-  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
 }
-
-.matrix-wrap { overflow:auto; flex:1; min-height:0; }
-.matrix-table { width:100%; border-collapse:collapse; font-size:12px; }
-.matrix-table th { background:var(--bg3); padding:9px 14px; text-align:left; font-weight:500; color:var(--text2); border-bottom:1px solid var(--border2); font-size:11px; letter-spacing:.04em; white-space:nowrap; }
-.matrix-table td { padding:8px 14px; color:var(--text2); border-bottom:1px solid var(--border); vertical-align:top; }
-.matrix-table tr:last-child td { border-bottom:none; }
-.matrix-table tr:hover td { background:var(--bg3); }
-.matrix-lesson { font-family:monospace; font-size:11px; color:var(--text); white-space:nowrap; font-weight:500; }
-.matrix-cell { font-size:12px; max-width:200px; line-height:1.5; }
+.matrix-lesson-link:hover {
+  background: rgba(59, 130, 246, 0.1);
+  text-decoration: underline;
+}
+.matrix-cell { font-size: 12px; line-height: 1.6; }
+.matrix-cell--objective { max-width: 320px; }
 
 /* ── code fallback ───────────────────────────────────────────── */
 .code-fallback { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin:12px 0; overflow-x:auto; }
@@ -1045,4 +1157,23 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
   user-select: none;
   -webkit-user-drag: none;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+/* Image Preview */
+.preview-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background: var(--bg3);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 20px 0;
+}
+.preview-image {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }

@@ -10,15 +10,16 @@ import { ProjectSelector } from '../components/ProjectSelector';
 import { DocOutline } from '../components/DocOutline';
 import { SlideOutline } from '../components/SlideOutline';
 
-const TABS = ['Dashboard', 'Lessons', 'Slides', 'Matrix', 'Audits'];
+const TABS = ['Dashboard', 'Lessons', 'Slides', 'Assets', 'Code', 'Matrix', 'Audits'];
 
 export function DashboardPage() {
   const { 
-    activeProject, status, matrix, lessons, slides, audits,
+    activeProject, status, matrix, lessons, slides, assets, codeFiles, audits,
     loading, error, lastFetched, refresh, fetchAll,
     lessonType, lessonContent, setTokenGateOpen,
     renderMode,
-    groupMode, setGroupMode, activeLessonPack, setActiveLessonPack
+    groupMode, setGroupMode, activeLessonPack, setActiveLessonPack,
+    selectLesson
   } = useStore();
   
   const [tab, setTab] = useState('Dashboard');
@@ -43,6 +44,30 @@ export function DashboardPage() {
 
   const handleTabChange = (t) => {
     setTab(t);
+  };
+
+  const handleMatrixSelect = (lessonId) => {
+    if (!lessonId) return;
+    // Clean up lessonId for robust matching (e.g. "HP7_1" -> "HP7_1")
+    const cleanId = lessonId.trim();
+    
+    // 1. Try to find in lessons
+    const lesson = lessons.find(l => l.name.includes(cleanId));
+    if (lesson) {
+      selectLesson(lesson, 'lesson');
+      setTab('Lessons');
+      return;
+    }
+
+    // 2. Try to find in slides
+    const slide = slides.find(s => s.name.includes(cleanId));
+    if (slide) {
+      selectLesson(slide, 'slide');
+      setTab('Slides');
+      return;
+    }
+    
+    console.warn(`Could not find lesson or slide for ID: ${cleanId}`);
   };
 
   // Lesson Pack Logic
@@ -70,7 +95,7 @@ export function DashboardPage() {
       <aside className="app-sidebar">
         <div className="app-sidebar-header">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <h1 className="dash-title">Curriculum OS</h1>
+            <h1 className="dash-title">LM Dashboard </h1>
             <div className="dash-sub">
               <div>{activeProject}</div>
               {lastFetched && (
@@ -116,6 +141,12 @@ export function DashboardPage() {
               )}
               {t === 'Slides' && slides.length > 0 && (
                 <span className="sidebar-tab-count">{slides.length}</span>
+              )}
+              {t === 'Assets' && assets.length > 0 && (
+                <span className="sidebar-tab-count">{assets.length}</span>
+              )}
+              {t === 'Code' && codeFiles.length > 0 && (
+                <span className="sidebar-tab-count">{codeFiles.length}</span>
               )}
             </button>
           ))}
@@ -269,16 +300,27 @@ export function DashboardPage() {
         </>
       )}
 
-      {/* ── Viewer (Lessons & Slides) ── */}
-      {(tab === 'Lessons' || tab === 'Slides') && (
+      {/* ── Viewer (Lessons, Slides, Assets, Code) ── */}
+      {(tab === 'Lessons' || tab === 'Slides' || tab === 'Assets' || tab === 'Code') && (
         <section className="panel lesson-panel">
           <div className="panel-hdr">
             <span>{tab} Viewer</span>
-            <span className="panel-count">{lessonType === 'slide' ? slides.length : lessons.length} files</span>
+            <span className="panel-count">
+              {tab === 'Lessons' ? lessons.length : 
+               tab === 'Slides' ? slides.length : 
+               tab === 'Assets' ? assets.length : 
+               codeFiles.length} files
+            </span>
           </div>
         <div className={`lesson-layout ${showOutline ? 'lesson-layout--with-outline' : ''}`}>
             <div className="lesson-sidebar-wrapper">
-              <LessonSidebar forceType={tab === 'Lessons' ? 'lesson' : 'slide'} />
+              <LessonSidebar 
+                forceType={
+                  tab === 'Lessons' ? 'lesson' : 
+                  tab === 'Slides' ? 'slide' : 
+                  tab === 'Assets' ? 'asset' : 'code'
+                } 
+              />
             </div>
             <div className="preview-panel-wrapper">
               <PreviewPanel 
@@ -339,7 +381,7 @@ export function DashboardPage() {
             <span>Alignment Matrix</span>
             <span className="panel-count">{matrix.length} hàng</span>
           </div>
-          <AlignmentMatrix rows={matrix} />
+          <AlignmentMatrix rows={matrix} onSelectLesson={handleMatrixSelect} />
         </section>
       )}
 

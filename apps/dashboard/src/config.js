@@ -22,6 +22,8 @@ export const getProjectFiles = (projectDirName) => {
     reportsDir: `${base}/_reports`,
     analystDir: `${base}/_analyst`,
     designerDir: `${base}/_designer`,
+    assetsDir: `${base}/_assets`,
+    codeDir: `${base}/_code`,
   };
 };
 

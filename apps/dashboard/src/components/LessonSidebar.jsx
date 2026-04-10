@@ -3,13 +3,15 @@ import AuditBadge from './AuditBadge';
 
 export function LessonSidebar({ forceType }) {
   const { 
-    lessons, slides, activeLesson, selectLesson, 
+    lessons, slides, assets, codeFiles, activeLesson, selectLesson, 
     searchQuery, setSearchQuery, 
     filterHP, setFilterHP, loading,
     groupMode, activeLessonPack, audits
   } = useStore();
 
-  let items = forceType === 'slide' ? slides : lessons;
+  let items = forceType === 'slide' ? slides : 
+              forceType === 'asset' ? assets : 
+              forceType === 'code' ? codeFiles : lessons;
   let currentType = forceType || 'lesson';
 
   if (groupMode === 'pack') {
@@ -20,6 +22,12 @@ export function LessonSidebar({ forceType }) {
       });
       slides.forEach(s => {
         if (s.name.includes(activeLessonPack)) items.push({ ...s, type: 'slide' });
+      });
+      assets.forEach(a => {
+        if (a.name.includes(activeLessonPack)) items.push({ ...a, type: 'asset' });
+      });
+      codeFiles.forEach(c => {
+        if (c.name.includes(activeLessonPack)) items.push({ ...c, type: 'code' });
       });
     }
   }
@@ -42,13 +50,19 @@ export function LessonSidebar({ forceType }) {
   const hps = Array.from(new Set(items.map(l => l.name.match(/HP\d+/)?.[0]).filter(Boolean))).sort();
 
   const formatName = (l) => {
-    const name = l.name;
+    const name = l.displayName || l.name;
     const type = l.type || currentType;
     return name
       .replace('LESSON_', '')
       .replace('SLIDE_', '')
       .replace('.md', '')
-      .replace(/_/g, ' - ') + (type === 'slide' ? ' (Slide)' : '');
+      .replace('.sh', '')
+      .replace('.py', '')
+      .replace('.cpp', '')
+      .replace(/_/g, ' ') + 
+      (type === 'slide' ? ' (Slide)' : 
+       type === 'asset' ? ' (Asset)' : 
+       type === 'code' ? ' (Code)' : '');
   };
 
   const getAudit = (itemName) => {
@@ -61,7 +75,11 @@ export function LessonSidebar({ forceType }) {
       <div className="sidebar-filters">
         <input
           type="text"
-          placeholder={forceType === 'slide' ? "Tìm slide..." : "Tìm bài học..."}
+          placeholder={
+            forceType === 'slide' ? "Tìm slide..." : 
+            forceType === 'asset' ? "Tìm asset..." : 
+            forceType === 'code' ? "Tìm code..." : "Tìm bài học..."
+          }
           className="search-input"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
