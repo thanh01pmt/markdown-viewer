@@ -10,11 +10,11 @@ import { ProjectSelector } from '../components/ProjectSelector';
 import { DocOutline } from '../components/DocOutline';
 import { SlideOutline } from '../components/SlideOutline';
 
-const TABS = ['Dashboard', 'Lessons', 'Slides', 'Matrix'];
+const TABS = ['Dashboard', 'Lessons', 'Slides', 'Matrix', 'Audits'];
 
 export function DashboardPage() {
   const { 
-    activeProject, status, matrix, lessons, slides,
+    activeProject, status, matrix, lessons, slides, audits,
     loading, error, lastFetched, refresh, fetchAll,
     lessonType, lessonContent, setTokenGateOpen,
     renderMode,
@@ -187,6 +187,19 @@ export function DashboardPage() {
       {/* ── Main Content ── */}
       <main className="app-main">
         {loading && <div className="loading-bar"><div className="loading-bar-fill" /></div>}
+        
+        {/* Critical Alerts Banner */}
+        {tab === 'Dashboard' && status?.escalated?.length > 0 && (
+          <div className="alert-banner">
+            <span style={{ fontSize: '1.5rem' }}>⛔</span>
+            <div>
+              <b>Escalated Issues ({status.escalated.length})</b>
+              <ul style={{ margin: '4px 0 0 0', paddingLeft: '1.2rem', fontSize: '0.85rem' }}>
+                {status.escalated.map((item, i) => <li key={i}>{item}</li>)}
+              </ul>
+            </div>
+          </div>
+        )}
       {tab === 'Dashboard' && status && (
         <>
           <section className="metrics-row">
@@ -327,6 +340,60 @@ export function DashboardPage() {
             <span className="panel-count">{matrix.length} hàng</span>
           </div>
           <AlignmentMatrix rows={matrix} />
+        </section>
+      )}
+
+      {/* ── Audits tab ── */}
+      {tab === 'Audits' && (
+        <section className="panel">
+          <div className="panel-hdr">
+            <span>Báo cáo Chất lượng & Tài nguyên</span>
+            <span className="panel-count">{audits.length} báo cáo</span>
+          </div>
+          <div style={{ padding: '1.5rem' }}>
+            {audits.length > 0 ? (
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+                gap: '1.25rem' 
+              }}>
+                {audits.map((a, i) => (
+                  <div key={i} className="panel" style={{ 
+                    padding: '1.25rem', 
+                    border: '1px solid var(--border2)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                    transition: 'transform 0.2s',
+                    cursor: 'default'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div style={{ fontWeight: '700', fontSize: '1rem', color: 'var(--text1)' }}>
+                        {a.Lesson || a.ID || `Audit #${i+1}`}
+                      </div>
+                      <AuditBadge score={a.Score} placeholders={a.Placeholders} />
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {(a.Materials || a.Vật_liệu || []).map((m, j) => (
+                        <span key={j} className="resource-tag">📦 {m}</span>
+                      ))}
+                    </div>
+
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text3)', marginTop: 'auto', borderTop: '1px solid var(--border3)', paddingTop: '8px' }}>
+                      {a.Hardware && <div style={{ marginBottom: '4px' }}><b>Hardware:</b> {a.Hardware.join(', ')}</div>}
+                      {a.Software && <div><b>Software:</b> {a.Software.join(', ')}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty">
+                Chưa có dữ liệu audit. <br/>
+                Hệ thống tìm kiếm các file <code>RESOURCE_AUDIT_*.json</code> trong thư mục <code>_reports/</code>.
+              </div>
+            )}
+          </div>
         </section>
       )}
 

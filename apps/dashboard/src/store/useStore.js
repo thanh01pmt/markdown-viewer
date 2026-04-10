@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
   fetchProjects, fetchProjectStatus, fetchAlignmentMatrix,
-  fetchLessons, fetchLessonContent, fetchSlides, fetchChangelog, clearCache,
+  fetchLessons, fetchLessonContent, fetchSlides, fetchChangelog, fetchAuditReports, clearCache,
   fetchAggrData
 } from '../api/github';
 import { parseProjectStatus, parseAlignmentMatrix } from '../utils/parsers';
@@ -35,6 +35,7 @@ export const useStore = create(
       lessons: [],
       slides: [],
       changelog: '',
+      audits: [],
       loading: false,
       error: null,
       lastFetched: null,
@@ -60,7 +61,7 @@ export const useStore = create(
         set({ loading: true, error: null });
         
         try {
-          let statusMd = '', matrixMd = '', lessonFiles = [], slideFiles = [], changelogMd = '', projs = [];
+          let statusMd = '', matrixMd = '', lessonFiles = [], slideFiles = [], changelogMd = '', projs = [], reports = [];
 
           if (!token) {
             // Use optimized aggregated fetch via Netlify Function
@@ -86,15 +87,16 @@ export const useStore = create(
           } else {
             // Legacy/Override: Fallback to individual calls (parallelized)
             const files = getProjectFiles(activeProject);
-            const [s, m, l, sl, c, p] = await Promise.all([
+            const [s, m, l, sl, c, p, r] = await Promise.all([
               fetchProjectStatus(files.projectStatus, token),
               fetchAlignmentMatrix(files.alignmentMatrix, token).catch(() => ''),
               fetchLessons(files.lessonsDir, token).catch(() => []),
               fetchSlides(files.slidesDir, token).catch(() => []),
               fetchChangelog(files.changelog, token).catch(() => ''),
               fetchProjects(token).catch(() => []),
+              fetchAuditReports(files.reportsDir, token).catch(() => []),
             ]);
-            statusMd = s; matrixMd = m; lessonFiles = l; slideFiles = sl; changelogMd = c; projs = p;
+            statusMd = s; matrixMd = m; lessonFiles = l; slideFiles = sl; changelogMd = c; projs = p; reports = r;
           }
           
           set({
@@ -104,6 +106,7 @@ export const useStore = create(
             slides: slideFiles,
             changelog: changelogMd,
             projects: projs,
+            audits: reports,
             loading: false,
             lastFetched: Date.now(),
           });

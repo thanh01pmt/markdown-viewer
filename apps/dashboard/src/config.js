@@ -19,6 +19,9 @@ export const getProjectFiles = (projectDirName) => {
     resourceManifest: `${base}/_shared/RESOURCE_MANIFEST.md`,
     lessonsDir: `${base}/_shared/LESSONS`,
     slidesDir: `${base}/_shared/SLIDES`,
+    reportsDir: `${base}/_reports`,
+    analystDir: `${base}/_analyst`,
+    designerDir: `${base}/_designer`,
   };
 };
 

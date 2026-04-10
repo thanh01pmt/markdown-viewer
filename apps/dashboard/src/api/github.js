@@ -115,6 +115,25 @@ export async function fetchLessonContent(lessonPath, token) {
   return fetchFileContent(lessonPath, token);
 }
 
+export async function fetchAuditReports(path, token) {
+  const files = await fetchDirContents(path, token);
+  const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+  
+  const reports = await Promise.all(
+    jsonFiles.map(async (file) => {
+      const content = await fetchFileContent(file.path, token);
+      try {
+        return JSON.parse(content);
+      } catch {
+        return [];
+      }
+    })
+  );
+  
+  // Flatten reports since each file is an array of lesson results
+  return reports.flat();
+}
+
 export function clearCache() {
   cache.clear();
 }

@@ -1,11 +1,12 @@
 import { useStore } from '../store/useStore';
+import AuditBadge from './AuditBadge';
 
 export function LessonSidebar({ forceType }) {
   const { 
     lessons, slides, activeLesson, selectLesson, 
     searchQuery, setSearchQuery, 
     filterHP, setFilterHP, loading,
-    groupMode, activeLessonPack
+    groupMode, activeLessonPack, audits
   } = useStore();
 
   let items = forceType === 'slide' ? slides : lessons;
@@ -50,6 +51,11 @@ export function LessonSidebar({ forceType }) {
       .replace(/_/g, ' - ') + (type === 'slide' ? ' (Slide)' : '');
   };
 
+  const getAudit = (itemName) => {
+    const id = itemName.match(/HP\d+_\d+/)?.[0];
+    return audits.find(a => a.Lesson === id || a.ID === id || itemName.includes(a.Lesson));
+  };
+
   return (
     <div className="lesson-sidebar">
       <div className="sidebar-filters">
@@ -86,6 +92,9 @@ export function LessonSidebar({ forceType }) {
               onClick={() => selectLesson(l, l.type || currentType)}
             >
               <div className="sidebar-item-name">{formatName(l)}</div>
+              {l.type !== 'slide' && currentType !== 'slide' && (
+                <AuditBadge score={getAudit(l.name)?.Score} placeholders={getAudit(l.name)?.Placeholders} />
+              )}
             </button>
           ))
         ) : (

@@ -1,3 +1,6 @@
+import { useStore } from '../store/useStore';
+import AuditBadge from './AuditBadge';
+
 const STATUS_CFG = {
   done:    { label: '✓ Done',    cls: 'badge-done' },
   pending: { label: '⏳ Pending', cls: 'badge-pending' },
@@ -6,6 +9,12 @@ const STATUS_CFG = {
 };
 
 export function AlignmentMatrix({ rows }) {
+  const { audits } = useStore();
+  
+  const getAudit = (lessonName) => {
+    return audits.find(a => (a.Lesson && lessonName.includes(a.Lesson)) || (a.ID && lessonName.includes(a.ID)));
+  };
+
   if (!rows?.length) return (
     <div className="empty">Chưa có dữ liệu Alignment Matrix — kiểm tra file <code>ALIGNMENT_MATRIX.md</code>.</div>
   );
@@ -28,7 +37,12 @@ export function AlignmentMatrix({ rows }) {
             const cfg = STATUS_CFG[row.status] || STATUS_CFG.todo;
             return (
               <tr key={i}>
-                <td className="matrix-lesson">{row.lesson}</td>
+                <td className="matrix-lesson">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {row.lesson}
+                    <AuditBadge score={getAudit(row.lesson)?.Score} placeholders={getAudit(row.lesson)?.Placeholders} />
+                  </div>
+                </td>
                 <td className="matrix-cell">{row.objective}</td>
                 <td className="matrix-cell">{row.content}</td>
                 <td className="matrix-cell">{row.activity}</td>

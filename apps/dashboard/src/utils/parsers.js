@@ -65,13 +65,32 @@ export function parseProjectStatus(md) {
     }
   }
 
+  // ── Issues & Escalated ───────────────────────────────────────
+  const issues = [];
+  const escalated = [];
+  let inIssues = false;
+  for (const line of lines) {
+    if (/##\s*4\.\s*Việc đang dang dở/i.test(line)) { inIssues = true; continue; }
+    if (inIssues && /^##/.test(line)) { inIssues = false; }
+    if (!inIssues) continue;
+    
+    if (line.includes('⛔ ESCALATED')) {
+      escalated.push(line.replace(/.*⛔ ESCALATED[:\s]*/i, '').trim());
+    } else if (line.trim().startsWith('-')) {
+      issues.push(line.replace(/^-\s*/, '').trim());
+    }
+  }
+
   // ── Computed stats ─────────────────────────────────────────
   const done = pipelineRows.filter(r => r.status === 'done').length;
   const pending = pipelineRows.filter(r => r.status === 'pending').length;
   const total = pipelineRows.length;
   const hpDone = roadmap.filter(r => r.done).length;
 
-  return { pipelineRows, roadmap, changelog, stats: { done, pending, total, hpDone, hpTotal: roadmap.length } };
+  return { 
+    pipelineRows, roadmap, changelog, issues, escalated,
+    stats: { done, pending, total, hpDone, hpTotal: roadmap.length } 
+  };
 }
 
 function normalizeStatus(raw) {
