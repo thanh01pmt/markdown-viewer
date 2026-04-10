@@ -1,3 +1,14 @@
+const TECHNICAL_KEYS = [
+  'marp', 'theme', 'size', 'paginate', 'header', 'footer', 'style', 'class',
+  'headingdivider', 'color', 'background', 'background-color', 'border', 'border-left',
+  'font-family', 'font-size', 'line-height', 'transition', 'width', 'height', 'text-shadow'
+];
+
+function isTechnicalKey(key) {
+  const k = key.toLowerCase();
+  return TECHNICAL_KEYS.some(tk => k === tk || k.startsWith('ms-') || k.startsWith('_'));
+}
+
 export function extractMetadata(content) {
   if (!content) return { processedContent: '', mdMeta: [], isMarp: false, rawContent: '' };
 
@@ -14,13 +25,16 @@ export function extractMetadata(content) {
     fmLines.forEach(line => {
       const parts = line.split(':');
       if (parts.length >= 2) {
-        const key = parts[0].trim().toLowerCase();
+        const originalKey = parts[0].trim();
+        const key = originalKey.toLowerCase();
         const val = parts.slice(1).join(':').trim();
         
         if (key === 'marp' && (val === 'true' || val === '1')) isMarp = true;
         
-        // Add all frontmatter keys as metadata badges
-        mdMeta.push({ label: parts[0].trim(), value: val });
+        // Only add non-technical keys as metadata badges
+        if (!isTechnicalKey(key)) {
+          mdMeta.push({ label: originalKey, value: val });
+        }
       }
     });
     // Remove frontmatter from the "processed" content
@@ -46,11 +60,19 @@ export function extractMetadata(content) {
         
         const colonIdx = line.indexOf(':');
         if (colonIdx > 0 && colonIdx < 40) {
-          const key = line.substring(0, colonIdx).trim();
+          const originalKey = line.substring(0, colonIdx).trim();
+          const key = originalKey.toLowerCase();
           const val = line.substring(colonIdx + 1).trim();
-          mdMeta.push({ label: key, value: val });
+          
+          if (!isTechnicalKey(key)) {
+            mdMeta.push({ label: originalKey, value: val });
+          }
         } else if (line.length < 50) {
-          mdMeta.push({ label: line });
+          // If it doesn't look like a key-value or technical directive
+          const key = line.toLowerCase();
+          if (!isTechnicalKey(key) && !key.includes('marp')) {
+            mdMeta.push({ label: line });
+          }
         }
       });
     }
@@ -74,3 +96,4 @@ export function extractMetadata(content) {
     rawContent: rawContentForMarp 
   };
 }
+

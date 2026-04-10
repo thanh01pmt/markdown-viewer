@@ -169,9 +169,7 @@ export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
           ) : viewMode === 'raw' ? (
             <pre className="raw-view">{lessonContent}</pre>
           ) : (
-            <div className={`md-content ${isMarp ? 'is-marp' : ''}`}>
-              <MarkdownRenderer content={lessonContent} forcedMode={renderMode} />
-            </div>
+            <MarkdownRenderer content={lessonContent} forcedMode={renderMode} />
           )}
         </div>
       </div>

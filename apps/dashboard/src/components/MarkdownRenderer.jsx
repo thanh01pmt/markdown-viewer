@@ -90,11 +90,15 @@ export function MarkdownRenderer({ content, forcedMode = 'slide' }) {
   const effectiveMode = isMarp ? forcedMode : 'doc';
 
   if (isMarp && effectiveMode === 'slide') {
-    return <MarpRenderer rawContent={rawContent} />;
+    return (
+      <div className="is-marp-presentation" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <MarpRenderer rawContent={rawContent} />
+      </div>
+    );
   }
 
   return (
-    <div className="md-content">
+    <div className={`md-content ${effectiveMode === 'doc' ? 'is-doc' : ''}`}>
       {mdMeta.length > 0 && (
         <div className="md-meta-badges">
           {mdMeta.map((meta, i) => (

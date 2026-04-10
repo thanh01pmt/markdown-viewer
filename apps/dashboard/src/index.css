@@ -304,14 +304,17 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .preview-loading { display:flex; align-items:center; gap:12px; color:var(--text3); padding:40px; font-size:13px; }
 .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.1); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg)} }
-.md-content { max-width:780px; }
-.md-content.is-marp {
-  max-width: none;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+.md-content { 
+  max-width: 780px; 
+  margin: 0 auto;
 }
-.preview-box-body:has(.is-marp) {
+
+.is-marp-presentation {
+  width: 100%;
+  height: 100%;
+}
+
+.preview-box-body:has(.is-marp-presentation) {
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -603,49 +606,90 @@ body { font-family: -apple-system,BlinkMacSystemFont,'Inter',sans-serif; backgro
 .md-meta-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
 }
 
 .md-meta-badge {
   display: inline-flex;
   align-items: center;
   font-size: 11px;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border2);
   background: var(--bg2);
   color: var(--text2);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+.md-meta-badge:hover {
+  border-color: var(--text3);
+  transform: translateY(-1px);
 }
 
 .md-meta-badge.sme-mandate {
   border-color: rgba(59, 130, 246, 0.4);
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--blue);
+  background: rgba(59, 130, 246, 0.08);
+  color: #60a5fa;
 }
 
 .md-meta-label {
-  padding: 4px 8px;
+  padding: 6px 10px;
   background: var(--bg3);
-  font-weight: 500;
+  font-weight: 600;
   display: inline-block;
+  letter-spacing: 0.02em;
 }
 
 .md-meta-badge.sme-mandate .md-meta-label {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-  border-right: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border-right: 1px solid rgba(59, 130, 246, 0.1);
 }
 
 .md-meta-value {
-  padding: 4px 8px;
+  padding: 6px 10px;
   opacity: 0.9;
   display: inline-block;
   border-left: 1px solid var(--border);
+  font-weight: 400;
 }
 
 .md-meta-badge.sme-mandate .md-meta-value {
   border-left: none;
+}
+
+/* ── Document Mode Content Refinements ────────────────────────── */
+.md-content.is-doc {
+  padding: 0 32px 48px;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.md-content.is-doc h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+  line-height: 1.2;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.md-content.is-doc h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 32px 0 16px;
+  letter-spacing: -0.02em;
+}
+
+.md-content.is-doc p {
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 16px;
 }
 
 /* ── Marp Presentation View ──────────────────────────────────── */
