@@ -133,10 +133,14 @@ export function getHeadings(content) {
   const slugger = new GithubSlugger();
   // Strip frontmatter before parsing headings
   const fmRegex = /^\s*---\s*\n([\s\S]*?)\n---\s*\n?/;
-  const stripped = content.replace(fmRegex, '');
+  let cleanContent = content.replace(fmRegex, '');
   
-  // Also strip HTML comments which might contain metadata that shouldn't be headings
-  const cleanContent = stripped.replace(/<!--[\s\S]*?-->/g, '');
+  // Strip code blocks to avoid false positive headings inside snippets
+  cleanContent = cleanContent.replace(/^```[\s\S]*?^```/gm, '');
+  cleanContent = cleanContent.replace(/^~~~[\s\S]*?^~~~/gm, '');
+  
+  // Strip HTML comments which might contain metadata that shouldn't be headings
+  cleanContent = cleanContent.replace(/<!--[\s\S]*?-->/g, '');
   
   const matches = Array.from(cleanContent.matchAll(/^(#{1,3})\s+(.+)$/gm));
   return matches.map(m => {

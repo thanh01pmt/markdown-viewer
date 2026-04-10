@@ -5,9 +5,11 @@ import { extractMetadata } from '../utils/markdown';
 import { REPO, PROJECTS_ROOT } from '../config';
 
 export function PreviewPanel({ showOutline, onToggleOutline, bodyRef }) {
-  const { activeLesson, lessonContent, lessonLoading, clearLesson } = useStore();
+  const { 
+    activeLesson, lessonContent, lessonLoading, clearLesson,
+    renderMode, setRenderMode 
+  } = useStore();
   const [viewMode, setViewMode] = useState('preview'); // 'preview' | 'raw'
-  const [renderMode, setRenderMode] = useState('slide'); // 'slide' | 'doc'
   const [copying, setCopying] = useState(false);
 
   const { isMarp } = useMemo(() => extractMetadata(lessonContent), [lessonContent]);

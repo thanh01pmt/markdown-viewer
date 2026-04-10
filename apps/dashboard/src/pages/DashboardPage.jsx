@@ -17,6 +17,7 @@ export function DashboardPage() {
     activeProject, status, matrix, lessons, slides,
     loading, error, lastFetched, refresh, fetchAll,
     lessonType, lessonContent, setTokenGateOpen,
+    renderMode,
     groupMode, setGroupMode, activeLessonPack, setActiveLessonPack
   } = useStore();
   
@@ -260,7 +261,7 @@ export function DashboardPage() {
         <section className="panel lesson-panel">
           <div className="panel-hdr">
             <span>{tab} Viewer</span>
-            <span className="panel-count">{tab === 'Lessons' ? lessons.length : slides.length} files</span>
+            <span className="panel-count">{lessonType === 'slide' ? slides.length : lessons.length} files</span>
           </div>
         <div className={`lesson-layout ${showOutline ? 'lesson-layout--with-outline' : ''}`}>
             <div className="lesson-sidebar-wrapper">
@@ -283,7 +284,7 @@ export function DashboardPage() {
             {/* Right sidebar outline — desktop only */}
             <div className="lesson-outline-wrapper">
               {showOutline && (
-                tab === 'Slides' ? (
+                renderMode === 'slide' ? (
                   <SlideOutline 
                     content={lessonContent} 
                     scrollContainerRef={previewBodyRef} 
@@ -298,7 +299,7 @@ export function DashboardPage() {
             </div>
             {/* Dialog outline — mobile only */}
             {showOutlineDialog && (
-              tab === 'Slides' ? (
+              renderMode === 'slide' ? (
                 <SlideOutline 
                   content={lessonContent}
                   scrollContainerRef={previewBodyRef}

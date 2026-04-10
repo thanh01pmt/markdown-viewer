@@ -52,6 +52,8 @@ export const useStore = create(
       setGroupMode: (mode) => set({ groupMode: mode, activeLessonPack: null }),
       activeLessonPack: null, // e.g. 'HP7_01'
       setActiveLessonPack: (pack) => set({ activeLessonPack: pack }),
+      renderMode: 'doc', // 'slide' or 'doc'
+      setRenderMode: (mode) => set({ renderMode: mode }),
 
       fetchAll: async () => {
         const { token, activeProject } = get();
@@ -113,7 +115,13 @@ export const useStore = create(
 
       selectLesson: async (lesson, type = 'lesson') => {
         const { token } = get();
-        set({ activeLesson: lesson, lessonType: type, lessonLoading: true, lessonContent: '' });
+        set({ 
+          activeLesson: lesson, 
+          lessonType: type, 
+          renderMode: type === 'slide' ? 'slide' : 'doc',
+          lessonLoading: true, 
+          lessonContent: '' 
+        });
         try {
           const content = await fetchLessonContent(lesson.path, token);
           set({ lessonContent: content, lessonLoading: false });

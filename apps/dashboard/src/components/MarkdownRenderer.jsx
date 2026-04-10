@@ -81,7 +81,7 @@ function MarpRenderer({ rawContent }) {
       if (processedHtml && marpHeadings.length > 0) {
         let headingIndex = 0;
         // More robust regex to find h1, h2, h3 tags and inject id
-        processedHtml = processedHtml.replace(/<(h[1-3])(\s+[^>]*)?>(.*?)<\/h[1-3]>/gi, (match, tag, attrs, text) => {
+        processedHtml = processedHtml.replace(/<(h[1-3])(\s+[^>]*)?>([\s\S]*?)<\/h[1-3]>/gi, (match, tag, attrs, text) => {
           if (headingIndex < marpHeadings.length) {
             const h = marpHeadings[headingIndex++];
             let otherAttrs = attrs || '';
