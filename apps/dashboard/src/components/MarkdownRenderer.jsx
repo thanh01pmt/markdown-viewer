@@ -43,8 +43,37 @@ function MarpRenderer({ rawContent }) {
     if (!content) return { html: '', css: '' };
     
     try {
-      const marp = new Marp({ html: true });
-      const rendered = marp.render(content);
+      const marp = new Marp({ html: true, container: false });
+      
+      // Inject custom utility CSS for better split layout support
+      // and ensuring our index.css plays nice with Marp's defaults
+      const customTheme = `
+        /* marp-core default theme overrides */
+        section {
+          background-color: transparent !important;
+        }
+        
+        /* Ensure split background container takes 50% */
+        section[data-marpit-advanced-background="background"] {
+          display: flex !important;
+          flex-direction: row !important;
+        }
+        
+        section[data-marpit-advanced-background="background"] > .marpit-advanced-background-container {
+          flex: 0 0 50% !important;
+          z-index: 0;
+        }
+        
+        section[data-marpit-advanced-background="background"] > .marpit-advanced-background-container + * {
+          flex: 1 !important;
+          z-index: 1;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+        }
+      `;
+      
+      const rendered = marp.render(content, { css: customTheme });
       const marpHeadings = getHeadings(content);
       let processedHtml = rendered?.html || '';
 
