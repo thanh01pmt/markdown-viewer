@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@marp-team/marp-core": "^4.3.0",
     "github-slugger": "^2.0.0",
+    "lucide-react": "^0.474.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-markdown": "^10.1.0",
