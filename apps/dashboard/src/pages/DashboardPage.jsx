@@ -321,7 +321,7 @@ export function DashboardPage() {
 
       {/* ── Matrix tab ── */}
       {tab === 'Matrix' && (
-        <section className="panel">
+        <section className="panel panel--flex">
           <div className="panel-hdr">
             <span>Alignment Matrix</span>
             <span className="panel-count">{matrix.length} hàng</span>
